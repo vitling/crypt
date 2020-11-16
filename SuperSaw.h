@@ -27,11 +27,12 @@ class SuperSawVoice : public SynthesiserVoice {
 private:
     std::vector<OscState> oscs;
     int maxUnisonVoices = 32;
-    int activeUnisonVoices = 4;
-    float spread = 0.0033;
+    int activeUnisonVoices = 32;
+    float spread = 0.03;
     
     float level = 0.0;
     float tailOff = 0.0;
+    float mainFrequency = 440;
     
     static inline float saw(float angle) {
         return (2.0f * angle/TAU) - 1;
@@ -41,8 +42,8 @@ private:
     ADSR::Parameters envParams;
 
 public:
-    SuperSawVoice(int nVoices, float spread) {
-        for (int i = 0; i < nVoices; i++) {
+    SuperSawVoice() {
+        for (int i = 0; i < maxUnisonVoices; i++) {
             oscs.emplace_back();
         }
         envParams = {.attack = 0.1, .decay = 0.1, .sustain = 0.7, .release = 0.7};
@@ -51,10 +52,15 @@ public:
     
     ~SuperSawVoice() override = default;
 
-    void setFrequency(float freq);
+    void setFrequency(float freq, bool resetAngles);
     
     bool canPlaySound(juce::SynthesiserSound *) override {
         return true;
+    }
+
+    void setSpread(float newValue) {
+        spread = newValue;
+        setFrequency(mainFrequency, false);
     }
     
     void startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound *sound, int currentPitchWheelPosition) override;
@@ -80,3 +86,6 @@ public:
 
 };
 
+class SuperSawSynthesiser : public Synthesiser {
+
+};

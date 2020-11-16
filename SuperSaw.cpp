@@ -50,7 +50,7 @@ void SuperSawVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesi
                               int currentPitchWheelPosition) {
     envelope.setSampleRate(getSampleRate());
     envelope.setParameters(envParams);
-    setFrequency(MidiMessage::getMidiNoteInHertz(midiNoteNumber));
+    setFrequency(MidiMessage::getMidiNoteInHertz(midiNoteNumber), true);
     level = velocity * 0.04f;
     tailOff = 0;
     envelope.noteOn();
@@ -67,11 +67,12 @@ void SuperSawVoice::stopNote(float velocity, bool allowTailOff) {
     }
 }
 
-void SuperSawVoice::setFrequency(float freq) {
+void SuperSawVoice::setFrequency(float freq, bool resetAngles) {
+    mainFrequency = freq;
     Random rnd;
     for (int i = 0; i < activeUnisonVoices; i++) {
         oscs[i].frequency = freq * (1 + rnd.nextFloat() * spread - spread/2);
-        oscs[i].angle = i / float(activeUnisonVoices) * TAU;
+        if (resetAngles) oscs[i].angle = i / float(activeUnisonVoices) * TAU;
         oscs[i].pan = i / float(activeUnisonVoices) * 2 - 1;
         float cyclesPerSample = oscs[i].frequency / getSampleRate();
         oscs[i].increment = cyclesPerSample * TAU;
