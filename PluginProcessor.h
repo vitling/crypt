@@ -13,6 +13,7 @@
 #include "SuperSaw.h"
 
 
+
 //==============================================================================
 /**
 */
@@ -25,10 +26,11 @@ private:
     Synthesiser synth;
     Reverb reverb;
 
+public:
+
     AudioParameterFloat* spread;
     AudioParameterFloat* space;
-    
-public:
+
     //==============================================================================
     CryptAudioProcessor() : AudioProcessor(BusesProperties().withOutput ("Output", juce::AudioChannelSet::stereo(), true)) {
         addParameter(spread = new AudioParameterFloat("Spread", "Spread", {0, 0.06, 0.002}, 0.03));
@@ -94,11 +96,9 @@ public:
     }
 
     //==============================================================================
-    juce::AudioProcessorEditor* createEditor() override {
-        return nullptr;
-    }
+    juce::AudioProcessorEditor* createEditor() override;
     bool hasEditor() const override {
-        return false;
+        return true;
     }
 
     //==============================================================================
