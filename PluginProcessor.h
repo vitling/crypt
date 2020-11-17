@@ -13,11 +13,10 @@
 #include "SuperSaw.h"
 
 
-
 //==============================================================================
 /**
 */
-class CryptAudioProcessor  : public AudioProcessor , AudioProcessorParameter::Listener
+class CryptAudioProcessor  : public AudioProcessor, public AudioProcessorValueTreeState::Listener
 {
 private:
     //==============================================================================
@@ -26,35 +25,44 @@ private:
     Synthesiser synth;
     Reverb reverb;
 
-    float dirtValue = 0.0f;
+    float getParameterValue(StringRef parameterName) const {
+        auto param = state.getParameter(parameterName);
+        return param->convertFrom0to1(param->getValue());
+    }
 
 public:
 
-    AudioParameterFloat* spread;
-    AudioParameterFloat* space;
-    AudioParameterFloat* shape;
-    AudioParameterFloat* dirt;
+    AudioProcessorValueTreeState state;
 
     //==============================================================================
-    CryptAudioProcessor() : AudioProcessor(BusesProperties().withOutput ("Output", juce::AudioChannelSet::stereo(), true)) {
-        addParameter(spread = new AudioParameterFloat("Spread", "Spread", {0, 0.06, 0.002}, 0.03));
-        addParameter(space = new AudioParameterFloat("Space", "Space", {0,1,0.01}, 0.4));
-        addParameter(shape = new AudioParameterFloat("Shape", "Shape", {0, 1, 0.01}, 0.0f));
-        addParameter(dirt = new AudioParameterFloat("Dirt", "Dirt", {0, 1, 0.01}, 0.0f));
-        spread->addListener(this);
-        space->addListener(this);
-        shape->addListener(this);
-        dirt->addListener(this);
+    CryptAudioProcessor() :
+        AudioProcessor(BusesProperties().withOutput ("Output", juce::AudioChannelSet::stereo(), true)),
+        state(*this, nullptr, "state", {
+            std::make_unique<AudioParameterFloat>("spread", "Spread", NormalisableRange<float>(0.0,0.1,0.001), 0.3),
+            std::make_unique<AudioParameterFloat>("shape", "Shape", NormalisableRange<float>(0.0,1.0,0.01), 0.0),
+            std::make_unique<AudioParameterFloat>("space", "Space", NormalisableRange<float>(0.0,1.0,0.01), 0.4),
+            std::make_unique<AudioParameterFloat>("dirt", "Dirt", NormalisableRange<float>(0.0,1.0,0.01), 0.0),
+            std::make_unique<AudioParameterFloat>("attack", "Attack", NormalisableRange<float>(0.0,6.0,0.001, 0.3), 0.0),
+            std::make_unique<AudioParameterFloat>("release", "Release", NormalisableRange<float>(0.0,5.0, 0.001, 0.3), 0.0)
+        }) {
+
 
         for (int i = 0; i < 6; i++) {
-            synth.addVoice(new SuperSawVoice());
+            auto voice = new SuperSawVoice(state);
+            synth.addVoice(voice);
         }
         synth.addSound(new SuperSawSound());
 
-        setSpace(space->get());
+        state.addParameterListener("space", this);
+        setSpace(getParameterValue("space"));
     }
     ~CryptAudioProcessor() override = default;
 
+    void parameterChanged(const String &parameterID, float newValue) override {
+        if (parameterID == "space") {
+            setSpace(newValue);
+        }
+    }
 
     void setSpace(float space) {
         Reverb::Parameters params {
@@ -66,28 +74,6 @@ public:
             .freezeMode = 0.0f};
 
         reverb.setParameters(params);
-    }
-
-    void parameterValueChanged(int parameterIndex, float newValue) override {
-        if (parameterIndex == spread->getParameterIndex()) {
-            for (int i =0 ; i < synth.getNumVoices(); i++) {
-                auto *voice = dynamic_cast<SuperSawVoice*>(synth.getVoice(i));
-                voice->setSpread(spread->get());
-            }
-        } else if (parameterIndex == space->getParameterIndex()) {
-            setSpace(space->get());
-        } else if (parameterIndex == shape->getParameterIndex()) {
-            for (int i =0 ; i < synth.getNumVoices(); i++) {
-                auto *voice = dynamic_cast<SuperSawVoice*>(synth.getVoice(i));
-                voice->setShaper(shape->get());
-            }
-        } else if (parameterIndex == dirt->getParameterIndex()) {
-            dirtValue = dirt->get();
-        }
-    }
-
-    void parameterGestureChanged(int parameterIndex, bool gestureIsStarting) override {
-
     }
 
     //==============================================================================
@@ -103,17 +89,6 @@ public:
         return (layouts.getMainOutputChannels() == 2);
     }
 
-    float waveShape(float f) {
-        f = f * (1.0 + dirtValue * 10);
-        if (f < -1.0f) {
-            return -2/3.0f;
-        } else if (f > 1.0f) {
-            return 2/3.0f;
-        } else {
-            return f - (f * f * f)/3.0f;
-        }
-    }
-
     void processBlock (AudioBuffer<float>& audio, MidiBuffer& midi) override {
 //        IIRFilter filter;
 //        filter.setCoefficients(IIRCoefficients::makeLowPass(getSampleRate(), 3000.0, 1));
@@ -126,10 +101,10 @@ public:
 //        filter.processSamples(l, audio.getNumSamples());
 //        filter.processSamples(r, audio.getNumSamples());
 
-        for (int i =0 ; i < audio.getNumSamples(); i++) {
-            l[i] = waveShape(l[i] * 10)/10;
-            r[i] = waveShape(r[i] * 10)/10;
-        }
+//        for (int i =0 ; i < audio.getNumSamples(); i++) {
+//            l[i] = waveShape(l[i] * 10)/10;
+//            r[i] = waveShape(r[i] * 10)/10;
+//        }
 
         reverb.processStereo(audio.getWritePointer(0), audio.getWritePointer(1), audio.getNumSamples());
     }
@@ -137,7 +112,7 @@ public:
     //==============================================================================
     juce::AudioProcessorEditor* createEditor() override;
     bool hasEditor() const override {
-        return false;
+        return true;
     }
 
     //==============================================================================
@@ -158,7 +133,7 @@ public:
     void changeProgramName (int index, const String& newName) override { }
 
     //==============================================================================
-    void getStateInformation (MemoryBlock& destData) override {}
+    void getStateInformation (MemoryBlock& destData) override { }
     void setStateInformation (const void* data, int sizeInBytes) override {}
 
 };

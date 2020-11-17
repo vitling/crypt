@@ -12,8 +12,8 @@
 
 #include <JuceHeader.h>
 
-#define PI MathConstants<double>::pi
-#define TAU MathConstants<double>::twoPi
+#define PI MathConstants<float>::pi
+#define TAU MathConstants<float>::twoPi
 
 
 struct OscState {
@@ -23,50 +23,39 @@ struct OscState {
     float pan = 0.0;
 };
 
-class SuperSawVoice : public SynthesiserVoice {
+class SuperSawVoice : public SynthesiserVoice, public AudioProcessorValueTreeState::Listener {
 private:
     std::vector<OscState> oscs;
     int maxUnisonVoices = 32;
     int activeUnisonVoices = 32;
-    float spread = 0.03;
     
     float level = 0.0;
-    float tailOff = 0.0;
     float mainFrequency = 440;
-    float shaper = 0.0;
+
+    AudioProcessorValueTreeState& state;
     
     static inline float saw(float angle) {
         return (2.0f * angle/TAU) - 1;
+    }
+
+    float getParameterValue(StringRef parameterName) {
+        auto param = state.getParameter(parameterName);
+        return param->convertFrom0to1(param->getValue());
     }
     
     ADSR envelope;
     ADSR::Parameters envParams;
 
+    void parameterChanged(const String &parameterID, float newValue) override;
+
 public:
-    SuperSawVoice() {
-        for (int i = 0; i < maxUnisonVoices; i++) {
-            oscs.emplace_back();
-        }
-        envParams = {.attack = 0.1, .decay = 0.1, .sustain = 0.7, .release = 0.7};
-    
-    }
+    explicit SuperSawVoice(AudioProcessorValueTreeState& state);
     
     ~SuperSawVoice() override = default;
 
     void setFrequency(float freq, bool resetAngles);
     
-    bool canPlaySound(juce::SynthesiserSound *) override {
-        return true;
-    }
-
-    void setSpread(float newValue) {
-        spread = newValue;
-        setFrequency(mainFrequency, false);
-    }
-
-    void setShaper(float newValue) {
-        shaper = newValue;
-    }
+    bool canPlaySound(juce::SynthesiserSound *) override {return true;}
     
     void startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound *sound, int currentPitchWheelPosition) override;
     
@@ -77,7 +66,6 @@ public:
     void controllerMoved(int controllerNumber, int newControllerValue) override {}
     
     void renderNextBlock(AudioBuffer<float> &buffer, int startSample, int numSamples) override;
-
 };
 
 class SuperSawSound : public SynthesiserSound {
