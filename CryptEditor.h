@@ -2,8 +2,7 @@
 // Created by David Whiting on 2020-11-16.
 //
 
-#ifndef CRYPT_SYNTH_PLUGIN_CRYPTEDITOR_H
-#define CRYPT_SYNTH_PLUGIN_CRYPTEDITOR_H
+#pragma once
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
@@ -41,6 +40,3 @@ public:
     }
 
 };
-
-
-#endif //CRYPT_SYNTH_PLUGIN_CRYPTEDITOR_H

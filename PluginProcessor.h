@@ -26,18 +26,25 @@ private:
     Synthesiser synth;
     Reverb reverb;
 
+    float dirtValue = 0.0f;
+
 public:
 
     AudioParameterFloat* spread;
     AudioParameterFloat* space;
+    AudioParameterFloat* shape;
+    AudioParameterFloat* dirt;
 
     //==============================================================================
     CryptAudioProcessor() : AudioProcessor(BusesProperties().withOutput ("Output", juce::AudioChannelSet::stereo(), true)) {
         addParameter(spread = new AudioParameterFloat("Spread", "Spread", {0, 0.06, 0.002}, 0.03));
         addParameter(space = new AudioParameterFloat("Space", "Space", {0,1,0.01}, 0.4));
-
+        addParameter(shape = new AudioParameterFloat("Shape", "Shape", {0, 1, 0.01}, 0.0f));
+        addParameter(dirt = new AudioParameterFloat("Dirt", "Dirt", {0, 1, 0.01}, 0.0f));
         spread->addListener(this);
         space->addListener(this);
+        shape->addListener(this);
+        dirt->addListener(this);
 
         for (int i = 0; i < 6; i++) {
             synth.addVoice(new SuperSawVoice());
@@ -69,6 +76,13 @@ public:
             }
         } else if (parameterIndex == space->getParameterIndex()) {
             setSpace(space->get());
+        } else if (parameterIndex == shape->getParameterIndex()) {
+            for (int i =0 ; i < synth.getNumVoices(); i++) {
+                auto *voice = dynamic_cast<SuperSawVoice*>(synth.getVoice(i));
+                voice->setShaper(shape->get());
+            }
+        } else if (parameterIndex == dirt->getParameterIndex()) {
+            dirtValue = dirt->get();
         }
     }
 
@@ -89,16 +103,41 @@ public:
         return (layouts.getMainOutputChannels() == 2);
     }
 
+    float waveShape(float f) {
+        f = f * (1.0 + dirtValue * 10);
+        if (f < -1.0f) {
+            return -2/3.0f;
+        } else if (f > 1.0f) {
+            return 2/3.0f;
+        } else {
+            return f - (f * f * f)/3.0f;
+        }
+    }
+
     void processBlock (AudioBuffer<float>& audio, MidiBuffer& midi) override {
+//        IIRFilter filter;
+//        filter.setCoefficients(IIRCoefficients::makeLowPass(getSampleRate(), 3000.0, 1));
+
         audio.clear();
         synth.renderNextBlock(audio, midi, 0,audio.getNumSamples());
+        auto *l = audio.getWritePointer(0);
+        auto *r = audio.getWritePointer(1);
+
+//        filter.processSamples(l, audio.getNumSamples());
+//        filter.processSamples(r, audio.getNumSamples());
+
+        for (int i =0 ; i < audio.getNumSamples(); i++) {
+            l[i] = waveShape(l[i] * 10)/10;
+            r[i] = waveShape(r[i] * 10)/10;
+        }
+
         reverb.processStereo(audio.getWritePointer(0), audio.getWritePointer(1), audio.getNumSamples());
     }
 
     //==============================================================================
     juce::AudioProcessorEditor* createEditor() override;
     bool hasEditor() const override {
-        return true;
+        return false;
     }
 
     //==============================================================================

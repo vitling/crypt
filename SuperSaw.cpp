@@ -10,6 +10,10 @@
 
 #include "SuperSaw.h"
 
+float clamp(float value) {
+    return value < -1.0f ? -1.0f : value > 1.0f ? 1.0f : value;
+}
+
 void SuperSawVoice::renderNextBlock(AudioBuffer<float> &buffer, int startSample, int numSamples) {
     auto* left = buffer.getWritePointer(0);
     auto* right = buffer.getWritePointer(1);
@@ -29,8 +33,11 @@ void SuperSawVoice::renderNextBlock(AudioBuffer<float> &buffer, int startSample,
             float rPan = (o.pan + 1) / 2;
             float lPan = 1.0f - rPan;
 
-            outL += saw(o.angle) * lPan;
-            outR += saw(o.angle) * rPan;
+            float wave = saw(o.angle);
+            float shaped = clamp(wave + copysign(shaper, wave));
+
+            outL += shaped * lPan;
+            outR += shaped * rPan;
             o.angle += o.increment;
             //o.angle -= o.angle > TAU ? TAU : 0;
             if (o.angle > TAU) o.angle -= TAU;

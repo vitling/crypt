@@ -33,6 +33,7 @@ private:
     float level = 0.0;
     float tailOff = 0.0;
     float mainFrequency = 440;
+    float shaper = 0.0;
     
     static inline float saw(float angle) {
         return (2.0f * angle/TAU) - 1;
@@ -61,6 +62,10 @@ public:
     void setSpread(float newValue) {
         spread = newValue;
         setFrequency(mainFrequency, false);
+    }
+
+    void setShaper(float newValue) {
+        shaper = newValue;
     }
     
     void startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound *sound, int currentPitchWheelPosition) override;
