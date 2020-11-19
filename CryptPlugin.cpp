@@ -6,36 +6,53 @@
 
 #define TAU MathConstants<float>::twoPi
 
-struct OscState {
-    float angle = 0.0;
-    float frequency = 440;
-    float increment = 0.0;
-    float pan = 0.0;
-};
-
+/**
+ * A single voice of the polyphonic synthesiser
+ */
 class SuperSawVoice : public SynthesiserVoice, public AudioProcessorValueTreeState::Listener {
 private:
-    std::vector<OscState> oscs;
-    int maxUnisonVoices = 32;
-    int activeUnisonVoices = 32;
+    /** Stores the state of a single oscillator (of many) within the Voice */
+    struct OscState {
+        float angle = 0.0;
+        float frequency = 440;
+        float increment = 0.0;
+        float pan = 0.0;
+    };
 
+    /** The set of oscillators which make up this voice */
+    std::vector<OscState> oscillators;
+
+    /* The following are currently fixed and identical. That might change in the future */
+    int maxUnisonOscs = 32;
+    int activeUnisonOscs = 32;
+
+    /** Multiplier for output signal (used to scale by velocity) */
     float level = 0.0;
+
+    /** Frequency of the currently playing note */
     float mainFrequency = 440;
 
+    /** Reference to the parameter tree for the entire plugin so we can access parameters */
     AudioProcessorValueTreeState& state;
 
+    /** Un-antialiased sawtooth function between 0 and TAU */
     static inline float saw(float angle) {
         return (2.0f * angle/TAU) - 1;
     }
 
+    /** Function to do the slightly awkward work of pulling a scaled (non-normalised) value from a parameter name */
     float getParameterValue(StringRef parameterName) {
         auto param = state.getParameter(parameterName);
         return param->convertFrom0to1(param->getValue());
     }
 
+    /** Amplitude envelope for note */
     ADSR envelope;
+
+    /** Parameters for the envelope (kept separate so we can atomically replace) */
     ADSR::Parameters envParams;
 
+    /** Watch for changes to spread, attack and release parameters, as these need to update other elements */
     void parameterChanged(const String &parameterID, float newValue) override {
         if (parameterID == "spread") {
             setFrequency(mainFrequency, newValue, false);
@@ -48,10 +65,12 @@ private:
         }
     }
 
+    /** Clamp value between -1.0f and 1.0f */
     inline float clamp(float value) {
         return value < -1.0f ? -1.0f : value > 1.0f ? 1.0f : value;
     }
 
+    /** Waveshaping function which applies a cubic clipping curve, gained by the 'dirt' parameter */
     inline float shapeCompoundWave(float f, float dirt) {
         constexpr float factor = 2.0f;
         f = f * (1.0f/factor + dirt*10.0f);
@@ -66,8 +85,8 @@ private:
 
 public:
     explicit SuperSawVoice(AudioProcessorValueTreeState& state): state(state) {
-        for (int i = 0; i < maxUnisonVoices; i++) {
-            oscs.emplace_back();
+        for (int i = 0; i < maxUnisonOscs; i++) {
+            oscillators.emplace_back();
         }
 
         state.addParameterListener("spread",this);
@@ -78,25 +97,35 @@ public:
 
     ~SuperSawVoice() override = default;
 
+    /**
+     * Whenever we change the frequency, we need to apply the variations across all oscillators
+     * @param freq Base frequency (ie. note frequency)
+     * @param spread How much random deviation from the freq to apply to each oscillator
+     * @param resetAngles Whether osc angles should be reset to initial positions (yes when starting new note, no when
+     *                    continuing existing note
+     */
     void setFrequency(float freq, float spread, bool resetAngles) {
         mainFrequency = freq;
         Random rnd;
-        for (int i = 0; i < activeUnisonVoices; i++) {
-            oscs[i].frequency = freq * (1 + rnd.nextFloat() * spread - spread/2);
-            if (resetAngles) oscs[i].angle = i / float(activeUnisonVoices) * TAU;
-            oscs[i].pan = i / float(activeUnisonVoices) * 2 - 1;
-            float cyclesPerSample = oscs[i].frequency / getSampleRate();
-            oscs[i].increment = cyclesPerSample * TAU;
+        for (int i = 0; i < activeUnisonOscs; i++) {
+            oscillators[i].frequency = freq * (1 + rnd.nextFloat() * spread - spread / 2);
+            if (resetAngles) oscillators[i].angle = i / float(activeUnisonOscs) * TAU;
+            oscillators[i].pan = i / float(activeUnisonOscs) * 2 - 1;
+            float cyclesPerSample = oscillators[i].frequency / getSampleRate();
+            oscillators[i].increment = cyclesPerSample * TAU;
         }
     }
 
+    /* We only have one sound, so this is always true */
     bool canPlaySound(juce::SynthesiserSound *) override {return true;}
 
     void startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound *sound, int currentPitchWheelPosition) override {
         envelope.setSampleRate(getSampleRate());
         envParams = {.attack = getParameterValue("attack"), .decay = 0.1, .sustain = 1.0, .release = getParameterValue("release")};
         envelope.setParameters(envParams);
+
         setFrequency(MidiMessage::getMidiNoteInHertz(midiNoteNumber), getParameterValue("spread"), true);
+
         level = velocity * 0.04f + 0.02f;
         envelope.noteOn();
     }
@@ -122,18 +151,18 @@ public:
         float dirt = getParameterValue("dirt");
         float shape = getParameterValue("shape");
 
+        // Save CPU if the voice is not currently playing
         if (!envelope.isActive()) {
             return;
         }
-
 
         for (auto sample = startSample; sample < startSample + numSamples; ++sample) {
             auto outL = 0.0f;
             auto outR = 0.0f;
             auto envelopeValue = envelope.getNextSample();
 
-            for (int i = 0; i < activeUnisonVoices; i++) {
-                auto &o = oscs[i];
+            for (int i = 0; i < activeUnisonOscs; i++) {
+                auto &o = oscillators[i];
                 float rPan = (o.pan + 1) / 2;
                 float lPan = 1.0f - rPan;
 
@@ -157,6 +186,7 @@ public:
     }
 };
 
+/** This needs to exist to satisfy the needs of the Synthesiser class, but is otherwise meaningless */
 class SuperSawSound : public SynthesiserSound {
 public:
     SuperSawSound() = default;
@@ -168,15 +198,19 @@ public:
 
 };
 
-class CryptAudioProcessor  : public AudioProcessor, public AudioProcessorValueTreeState::Listener
-{
+/** The plugin itself */
+class CryptAudioProcessor  : public AudioProcessor, public AudioProcessorValueTreeState::Listener {
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CryptAudioProcessor)
 
+    // The two main components are the Synthesiser and the Reverb (space) effect
     Synthesiser synth;
     Reverb reverb;
 
+    const int MAX_POLYPHONY = 8;
+
+    /** Shortcut for getting true (non-normalised) values out of a parameter tree */
     float getParameterValue(StringRef parameterName) const {
         auto param = state.getParameter(parameterName);
         return param->convertFrom0to1(param->getValue());
@@ -184,9 +218,10 @@ private:
 
 public:
 
+    /** Parameter state of the plugin. This is public because I am lazy. TODO: encapsulate */
     AudioProcessorValueTreeState state;
 
-    //==============================================================================
+    /** Create plugin with Stereo output and setup all the parameters */
     CryptAudioProcessor() :
             AudioProcessor(BusesProperties().withOutput ("Output", juce::AudioChannelSet::stereo(), true)),
             state(*this, nullptr, "state", {
@@ -198,11 +233,13 @@ public:
                     std::make_unique<AudioParameterFloat>("release", "Release", NormalisableRange<float>(0.0,5.0, 0.001, 0.3), 0.0)
             }) {
 
-
-        for (int i = 0; i < 8; i++) {
+        // Add some voices to our empty synthesiser
+        for (int i = 0; i < MAX_POLYPHONY; i++) {
+            // The synth takes ownership of the voices, so this 'new' is safe
             auto voice = new SuperSawVoice(state);
             synth.addVoice(voice);
         }
+        // The synth takes ownership of the Sound, so this 'new' is safe
         synth.addSound(new SuperSawSound());
 
         state.addParameterListener("space", this);
@@ -215,6 +252,9 @@ public:
         }
     }
 
+    /** Whenever the 'space' parameter changes, we use it to derive a bunch of reverb settings and apply them to the
+     * existing Reverb unit
+     */
     void setSpace(float space) {
         Reverb::Parameters params {
                 .roomSize = 0.2f + 0.8f * space,
@@ -227,55 +267,55 @@ public:
         reverb.setParameters(params);
     }
 
-    //==============================================================================
+    /** Before playing for the first time we need to inform components of the current sample rate, and do an inital setup
+     * of the Reverb processor parameters
+     */
     void prepareToPlay (double sampleRate, int samplesPerBlock) override {
         synth.setCurrentPlaybackSampleRate(sampleRate);
         reverb.setSampleRate(sampleRate);
         setSpace(getParameterValue("space"));
     }
-    void releaseResources() override {
 
-    }
+    /** Everything we've allocated will be self-destructed, so there's no resources to release */
+    void releaseResources() override {}
 
     bool isBusesLayoutSupported (const BusesLayout& layouts) const override {
         return (layouts.getMainOutputChannels() == 2);
     }
 
+    /** Main audio generating segment. There is nothing in the chain that requires creating extra buffers, so this same
+     * AudioBuffer is passed around everywhere and only ever incremented
+     */
     void processBlock (AudioBuffer<float>& audio, MidiBuffer& midi) override {
         audio.clear();
-        synth.renderNextBlock(audio, midi, 0,audio.getNumSamples());
+        synth.renderNextBlock(audio, midi, 0, audio.getNumSamples());
         reverb.processStereo(audio.getWritePointer(0), audio.getWritePointer(1), audio.getNumSamples());
     }
 
-    //==============================================================================
+    // We need to defer this implementation until the end of the file, when we have defined our editor
     juce::AudioProcessorEditor* createEditor() override;
-    bool hasEditor() const override {
-        return true;
-    }
 
-    //==============================================================================
-    const String getName() const override {
-        return "Crypt";
-    }
-
+    // Various metadata about the plugin
+    bool hasEditor() const override { return true; }
+    const String getName() const override { return "Crypt";}
     bool acceptsMidi() const override {return true;}
     bool producesMidi() const override {return false;}
     bool isMidiEffect() const override {return false;}
-    double getTailLengthSeconds() const override {return 0.0;}
-
-    //==============================================================================
+    double getTailLengthSeconds() const override {return 0.0;} // TODO: make this dependent on release/reverb
     int getNumPrograms() override { return 1; }
     int getCurrentProgram() override { return 1; }
     void setCurrentProgram (int index) override {}
     const String getProgramName (int index) override { return "Basement"; }
     void changeProgramName (int index, const String& newName) override { }
 
-    //==============================================================================
+    // Save state to binary block (used eg. for saving state inside Ableton project)
     void getStateInformation (MemoryBlock& destData) override {
         auto stateToSave = state.copyState();
         std::unique_ptr<XmlElement> xml (stateToSave.createXml());
         copyXmlToBinary(*xml, destData);
     }
+
+    // Restore state from binary block
     void setStateInformation (const void* data, int sizeInBytes) override {
         std::unique_ptr<XmlElement> xmlState (getXmlFromBinary(data, sizeInBytes));
         if (xmlState != nullptr) {
@@ -284,26 +324,28 @@ public:
             }
         }
     }
-
 };
 
-
+/** GUI for the plugin */
 class CryptEditor: public AudioProcessorEditor {
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CryptEditor)
 
+    // Keep ourselves a convenient reference to the processor that made us
     CryptAudioProcessor & processor;
 
+    /** Each parameter has a slider, label and attachement, which we group here */
     struct ParamControls {
+        // unique_ptr so these get cleaned up automatically when the editor is destructed
         std::unique_ptr<Slider> slider;
         std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> attachment;
         std::unique_ptr<Label> label;
     };
 
+    /** Mapping parameter names to their GUI control components */
     std::map<std::string, ParamControls> controls;
 
-public:
-
+    /** Create a single control to control a single parameter, as specified by the paramId */
     void createControlFor(const std::string &paramId, Slider::SliderStyle style, int x, int y, int w, int h) {
         auto slider = std::make_unique<Slider>();
         auto attachment = std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(processor.state, paramId, *slider);
@@ -313,7 +355,9 @@ public:
         addAndMakeVisible(*slider);
         controls[paramId] = {.slider = std::move(slider), .attachment = std::move(attachment)};
     }
+public:
 
+    /** Set up the editor */
     explicit CryptEditor(CryptAudioProcessor &processor):
             AudioProcessorEditor(processor),
             processor(processor) {
@@ -329,6 +373,7 @@ public:
 
     }
 
+    // We use this paint function to paint our custom background image
     void paint (juce::Graphics& g) override {
         auto image = ImageCache::getFromMemory(BinaryData::ui_png, BinaryData::ui_pngSize);
         g.drawImageAt(image, 0,0);
