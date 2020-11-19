@@ -53,7 +53,7 @@ public:
     
     ~SuperSawVoice() override = default;
 
-    void setFrequency(float freq, bool resetAngles);
+    void setFrequency(float freq, float spread, bool resetAngles);
     
     bool canPlaySound(juce::SynthesiserSound *) override {return true;}
     
@@ -76,9 +76,5 @@ public:
     bool appliesToNote(int midiNoteNumber) override { return true; }
     
     bool appliesToChannel(int midiChannel) override { return true; }
-
-};
-
-class SuperSawSynthesiser : public Synthesiser {
 
 };

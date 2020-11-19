@@ -47,14 +47,13 @@ public:
         }) {
 
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 8; i++) {
             auto voice = new SuperSawVoice(state);
             synth.addVoice(voice);
         }
         synth.addSound(new SuperSawSound());
 
         state.addParameterListener("space", this);
-        setSpace(getParameterValue("space"));
     }
     ~CryptAudioProcessor() override = default;
 
@@ -80,6 +79,7 @@ public:
     void prepareToPlay (double sampleRate, int samplesPerBlock) override {
         synth.setCurrentPlaybackSampleRate(sampleRate);
         reverb.setSampleRate(sampleRate);
+        setSpace(getParameterValue("space"));
     }
     void releaseResources() override {
         
@@ -90,22 +90,8 @@ public:
     }
 
     void processBlock (AudioBuffer<float>& audio, MidiBuffer& midi) override {
-//        IIRFilter filter;
-//        filter.setCoefficients(IIRCoefficients::makeLowPass(getSampleRate(), 3000.0, 1));
-
         audio.clear();
         synth.renderNextBlock(audio, midi, 0,audio.getNumSamples());
-        auto *l = audio.getWritePointer(0);
-        auto *r = audio.getWritePointer(1);
-
-//        filter.processSamples(l, audio.getNumSamples());
-//        filter.processSamples(r, audio.getNumSamples());
-
-//        for (int i =0 ; i < audio.getNumSamples(); i++) {
-//            l[i] = waveShape(l[i] * 10)/10;
-//            r[i] = waveShape(r[i] * 10)/10;
-//        }
-
         reverb.processStereo(audio.getWritePointer(0), audio.getWritePointer(1), audio.getNumSamples());
     }
 
@@ -133,7 +119,18 @@ public:
     void changeProgramName (int index, const String& newName) override { }
 
     //==============================================================================
-    void getStateInformation (MemoryBlock& destData) override { }
-    void setStateInformation (const void* data, int sizeInBytes) override {}
+    void getStateInformation (MemoryBlock& destData) override {
+        auto stateToSave = state.copyState();
+        std::unique_ptr<XmlElement> xml (stateToSave.createXml());
+        copyXmlToBinary(*xml, destData);
+    }
+    void setStateInformation (const void* data, int sizeInBytes) override {
+        std::unique_ptr<XmlElement> xmlState (getXmlFromBinary(data, sizeInBytes));
+        if (xmlState != nullptr) {
+            if (xmlState->hasTagName(state.state.getType())) {
+                state.replaceState(ValueTree::fromXml(*xmlState));
+            }
+        }
+    }
 
 };

@@ -81,9 +81,10 @@ void SuperSawVoice::renderNextBlock(AudioBuffer<float> &buffer, int startSample,
 void SuperSawVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound *sound,
                               int currentPitchWheelPosition) {
     envelope.setSampleRate(getSampleRate());
+    envParams = {.attack = getParameterValue("attack"), .decay = 0.1, .sustain = 1.0, .release = getParameterValue("release")};
     envelope.setParameters(envParams);
-    setFrequency(MidiMessage::getMidiNoteInHertz(midiNoteNumber), true);
-    level = velocity * 0.04f;
+    setFrequency(MidiMessage::getMidiNoteInHertz(midiNoteNumber), getParameterValue("spread"), true);
+    level = velocity * 0.04f + 0.02f;
     envelope.noteOn();
 }
 
@@ -97,11 +98,9 @@ void SuperSawVoice::stopNote(float velocity, bool allowTailOff) {
     }
 }
 
-void SuperSawVoice::setFrequency(float freq, bool resetAngles) {
+void SuperSawVoice::setFrequency(float freq, float spread, bool resetAngles) {
     mainFrequency = freq;
     Random rnd;
-    float spread = getParameterValue("spread");
-    std::cerr << "Spread = " << spread << std::endl;
     for (int i = 0; i < activeUnisonVoices; i++) {
         oscs[i].frequency = freq * (1 + rnd.nextFloat() * spread - spread/2);
         if (resetAngles) oscs[i].angle = i / float(activeUnisonVoices) * TAU;
@@ -113,7 +112,7 @@ void SuperSawVoice::setFrequency(float freq, bool resetAngles) {
 
 void SuperSawVoice::parameterChanged(const String &parameterID, float newValue) {
     if (parameterID == "spread") {
-        setFrequency(mainFrequency, false);
+        setFrequency(mainFrequency, newValue, false);
     } else if (parameterID == "attack") {
         envParams.attack = newValue;
         envelope.setParameters(envParams);
