@@ -12,9 +12,9 @@ project(CRYPT_SYNTH_PLUGIN VERSION 0.0.1)
 # included JUCE directly in your source tree (perhaps as a submodule), you'll need to tell CMake to
 # include that subdirectory as part of the build.
 
-find_package(JUCE CONFIG REQUIRED)        # If you've installed JUCE to your system
+#find_package(JUCE CONFIG REQUIRED)        # If you've installed JUCE to your system
 # or
-#add_subdirectory(JUCE)                    # If you've put JUCE in a subdirectory called JUCE
+add_subdirectory(JUCE)                    # If you've put JUCE in a subdirectory called JUCE
 
 # juce_set_vst2_sdk_path(...)
 # juce_set_aax_sdk_path(...)
@@ -38,7 +38,10 @@ juce_add_plugin(CryptSynthPlugin
         COPY_PLUGIN_AFTER_BUILD TRUE        # Should the plugin be installed to a default location after building?
         PLUGIN_MANUFACTURER_CODE VITL               # A four-character manufacturer id with at least one upper-case character
         PLUGIN_CODE CRPT                            # A unique four-character plugin id with at least one upper-case character
-        FORMATS VST3 Standalone                  # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
+        DESCRIPTION "Hyper-Unison Synthesiser from Bow Church/Vitling"
+        VST3_CATEGORIES "Instrument Synth Stereo"
+        AU_MAIN_TYPE "kAudioUnitType_Generator"
+        FORMATS VST3 Standalone AU                  # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
         PRODUCT_NAME "Crypt")        # The name of the final executable, which can differ from the target name
 
 # `juce_generate_juce_header` will create a JuceHeader.h for a given target, which will be generated
