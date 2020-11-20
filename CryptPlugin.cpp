@@ -326,6 +326,21 @@ public:
     }
 };
 
+
+class MyLookAndFeel: public LookAndFeel_V4 {
+public:
+    MyLookAndFeel() {
+        setColour(Slider::ColourIds::thumbColourId, Colours::grey);
+        setColour(Slider::ColourIds::trackColourId, Colours::grey.darker());
+        setColour(Slider::ColourIds::backgroundColourId, Colours::grey.darker().withAlpha(0.5f));
+        setColour(Slider::ColourIds::rotarySliderFillColourId, Colours::grey.darker().withAlpha(0.5f));
+        setColour(Slider::ColourIds::rotarySliderOutlineColourId, Colours::grey.darker());
+
+    }
+
+    virtual ~MyLookAndFeel() = default;
+};
+
 /** GUI for the plugin */
 class CryptEditor: public AudioProcessorEditor {
 private:
@@ -345,6 +360,8 @@ private:
     /** Mapping parameter names to their GUI control components */
     std::map<std::string, ParamControls> controls;
 
+    MyLookAndFeel lookAndFeel;
+
     /** Create a single control to control a single parameter, as specified by the paramId */
     void createControlFor(const std::string &paramId, Slider::SliderStyle style, int x, int y, int w, int h) {
         auto slider = std::make_unique<Slider>();
@@ -361,6 +378,8 @@ public:
     explicit CryptEditor(CryptAudioProcessor &processor):
             AudioProcessorEditor(processor),
             processor(processor) {
+
+        setLookAndFeel(&lookAndFeel);
 
         setSize(500,400);
         setResizable(false, false);
