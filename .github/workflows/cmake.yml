@@ -1,6 +1,6 @@
 name: Build
 
-on: [workflow_dispatch]
+on: [push]
   
 
 env:
@@ -43,7 +43,7 @@ jobs:
       working-directory: ${{runner.workspace}}/build
       shell: bash
       # Execute the build.  You can specify a specific target with "--target <NAME>"
-      run: cmake --build . --config $BUILD_TYPE
+      run: cmake --build . --config $BUILD_TYPE --verbose
     
     - name: Upload VST3
       uses: actions/upload-artifact@v2.2.1
