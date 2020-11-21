@@ -13,9 +13,8 @@
 
 cmake_minimum_required(VERSION 3.15)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-add_compile_options("-std=c++17")
 
 project(CRYPT_SYNTH_PLUGIN VERSION 0.0.1)
 
