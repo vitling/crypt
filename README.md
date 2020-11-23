@@ -12,7 +12,7 @@ included as a submodule.
 
 ## Download
 
-Binaries are built automatically via GitHub Actions. However, I can only vouch for the macOS builds working, as I do not have the
+Binaries for VST3, AU and Standalone apps are built automatically via GitHub Actions. However, I can only vouch for the macOS builds working, as I do not have the
 means to test the Windows build. If you can test the Windows build then please let me know how it goes. Building for
 Linux should be simple to DIY with CMake.
 
