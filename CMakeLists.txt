@@ -36,7 +36,7 @@ juce_add_plugin(CryptSynthPlugin
         DESCRIPTION "Hyper-Unison Synthesiser from Bow Church/Vitling"
         VST3_CATEGORIES "Instrument Synth Stereo"
         AU_MAIN_TYPE "kAudioUnitType_Generator"
-        FORMATS VST3 Standalone AU                  # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
+        FORMATS VST3 VST Standalone AU                  # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
         PRODUCT_NAME "Crypt")        # The name of the final executable, which can differ from the target name
 
 
