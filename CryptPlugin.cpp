@@ -35,8 +35,7 @@ private:
     /** The set of oscillators which make up this voice */
     std::vector<OscState> oscillators;
 
-    /* The following are currently fixed and identical. That might change in the future */
-    int maxUnisonOscs = 32;
+    int maxUnisonOscs = 64;
     int activeUnisonOscs = 32;
 
     /** Multiplier for output signal (used to scale by velocity) */
@@ -75,6 +74,9 @@ private:
         } else if (parameterID == "release") {
             envParams.release = newValue;
             envelope.setParameters(envParams);
+        } else if (parameterID == "unison") {
+            activeUnisonOscs = static_cast<int>(newValue);
+            setFrequency(mainFrequency, getParameterValue("spread"), true);
         }
     }
 
@@ -96,6 +98,22 @@ private:
         }
     }
 
+    static constexpr int SINE_WAVETABLE_SIZE = 512;
+    float sinTable[SINE_WAVETABLE_SIZE];
+
+    void fillWaveTable() {
+        for (auto i = 0; i < SINE_WAVETABLE_SIZE; i++) {
+            float angle = TAU * i / SINE_WAVETABLE_SIZE;
+            sinTable[i] = sin(angle);
+        }
+    }
+
+    float wtSin(float angle) {
+        jassert(angle >= 0.0f);
+
+        return sinTable[static_cast<int>(SINE_WAVETABLE_SIZE * angle / TAU) % SINE_WAVETABLE_SIZE];
+    }
+
 public:
     explicit SuperSawVoice(AudioProcessorValueTreeState& state): state(state) {
         for (int i = 0; i < maxUnisonOscs; i++) {
@@ -105,6 +123,10 @@ public:
         state.addParameterListener("spread",this);
         state.addParameterListener("attack", this);
         state.addParameterListener("release", this);
+        state.addParameterListener("unison", this);
+
+        fillWaveTable();
+
         envParams = {.attack = getParameterValue("attack"), .decay = 0.1, .sustain = 1.0, .release = getParameterValue("release")};
     }
 
@@ -123,7 +145,7 @@ public:
         for (int i = 0; i < activeUnisonOscs; i++) {
             oscillators[i].frequency = freq * (1 + rnd.nextFloat() * spread - spread / 2);
             if (resetAngles) oscillators[i].angle = i / float(activeUnisonOscs) * TAU;
-            oscillators[i].pan = i / float(activeUnisonOscs) * 2 - 1;
+            oscillators[i].pan = i / float(activeUnisonOscs - 1) * 2 - 1;
             float cyclesPerSample = oscillators[i].frequency / getSampleRate();
             oscillators[i].increment = cyclesPerSample * TAU;
         }
@@ -163,6 +185,7 @@ public:
 
         float dirt = getParameterValue("dirt");
         float shape = getParameterValue("shape");
+        float tone = getParameterValue("tone") / 100.0f;
 
         // Save CPU if the voice is not currently playing
         if (!envelope.isActive()) {
@@ -181,9 +204,10 @@ public:
 
                 float wave = saw(o.angle);
                 float shaped = clamp(wave + copysign(shape, wave));
+                float toned = tone * shaped + (1.0f - tone) * wtSin(o.angle + 3 * TAU / 4);
 
-                outL += shaped * lPan;
-                outR += shaped * rPan;
+                outL += toned * lPan;
+                outR += toned * rPan;
                 o.angle += o.increment;
                 if (o.angle > TAU) o.angle -= TAU;
             }
@@ -238,12 +262,15 @@ public:
     CryptAudioProcessor() :
             AudioProcessor(BusesProperties().withOutput ("Output", juce::AudioChannelSet::stereo(), true)),
             state(*this, nullptr, "state", {
-                    std::make_unique<AudioParameterFloat>("spread", "Spread", NormalisableRange<float>(0.0,0.1,0.001), 0.3),
+                    std::make_unique<AudioParameterFloat>("spread", "Spread", NormalisableRange<float>(0.0,0.1,0.001), 0.5),
                     std::make_unique<AudioParameterFloat>("shape", "Shape", NormalisableRange<float>(0.0,1.0,0.01), 0.0),
                     std::make_unique<AudioParameterFloat>("space", "Space", NormalisableRange<float>(0.0,1.0,0.01), 0.4),
                     std::make_unique<AudioParameterFloat>("dirt", "Dirt", NormalisableRange<float>(0.0,1.0,0.01), 0.0),
-                    std::make_unique<AudioParameterFloat>("attack", "Attack", NormalisableRange<float>(0.0,6.0,0.001, 0.3), 0.0),
-                    std::make_unique<AudioParameterFloat>("release", "Release", NormalisableRange<float>(0.0,5.0, 0.001, 0.3), 0.0)
+                    std::make_unique<AudioParameterFloat>("attack", "Attack", NormalisableRange<float>(0.0,8.0,0.001, 0.3), 0.2),
+                    std::make_unique<AudioParameterFloat>("release", "Release", NormalisableRange<float>(0.0,8.0, 0.001, 0.3), 0.6),
+                    std::make_unique<AudioParameterFloat>("tone", "Tone", NormalisableRange<float>(0.0,100.0,1.0), 100.0),
+                    std::make_unique<AudioParameterFloat>("unison", "Unison", NormalisableRange<float>(4.0,64.0,1.0,0.5), 32.0),
+                    std::make_unique<AudioParameterFloat>("master", "master", NormalisableRange<float>(-12.0,3.0,0.01), 0.0f)
             }) {
 
         // Add some voices to our empty synthesiser
@@ -303,6 +330,8 @@ public:
         audio.clear();
         synth.renderNextBlock(audio, midi, 0, audio.getNumSamples());
         reverb.processStereo(audio.getWritePointer(0), audio.getWritePointer(1), audio.getNumSamples());
+        float masterDb = getParameterValue("master");
+        audio.applyGain(pow(10, masterDb/10));
     }
 
     // We need to defer this implementation until the end of the file, when we have defined our editor
@@ -314,11 +343,14 @@ public:
     bool acceptsMidi() const override {return true;}
     bool producesMidi() const override {return false;}
     bool isMidiEffect() const override {return false;}
-    double getTailLengthSeconds() const override {return 0.0;} // TODO: make this dependent on release/reverb
+    double getTailLengthSeconds() const override {
+        // note this is a total guess
+        return getParameterValue("release") + 5.0 * getParameterValue("space");
+    }
     int getNumPrograms() override { return 1; }
     int getCurrentProgram() override { return 1; }
     void setCurrentProgram (int index) override {}
-    const String getProgramName (int index) override { return "Basement"; }
+    const String getProgramName (int index) override { return "Default Program"; }
     void changeProgramName (int index, const String& newName) override { }
 
     // Save state to binary block (used eg. for saving state inside Ableton project)
@@ -337,21 +369,6 @@ public:
             }
         }
     }
-};
-
-
-class MyLookAndFeel: public LookAndFeel_V4 {
-public:
-    MyLookAndFeel() {
-        setColour(Slider::ColourIds::thumbColourId, Colours::grey);
-        setColour(Slider::ColourIds::trackColourId, Colours::grey.darker());
-        setColour(Slider::ColourIds::backgroundColourId, Colours::grey.darker().withAlpha(0.5f));
-        setColour(Slider::ColourIds::rotarySliderFillColourId, Colours::grey.darker().withAlpha(0.5f));
-        setColour(Slider::ColourIds::rotarySliderOutlineColourId, Colours::grey.darker());
-
-    }
-
-    virtual ~MyLookAndFeel() = default;
 };
 
 /** GUI for the plugin */
@@ -373,18 +390,21 @@ private:
     /** Mapping parameter names to their GUI control components */
     std::map<std::string, ParamControls> controls;
 
-    MyLookAndFeel lookAndFeel;
-
     /** Create a single control to control a single parameter, as specified by the paramId */
-    void createControlFor(const std::string &paramId, Slider::SliderStyle style, int x, int y, int w, int h) {
+    void createControlFor(const std::string &paramId, Slider::SliderStyle style, int x, int y, int w, int h, const std::string &textBoxValueSuffix = "") {
         auto slider = std::make_unique<Slider>();
         auto attachment = std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(processor.state, paramId, *slider);
         slider->setSliderStyle(style);
         slider->setTextBoxStyle(juce::Slider::TextBoxBelow, true, 70, 20);
+        slider->setTextValueSuffix(textBoxValueSuffix);
         slider->setBounds(x, y,w,h);
         addAndMakeVisible(*slider);
         controls[paramId] = {.slider = std::move(slider), .attachment = std::move(attachment)};
     }
+
+    HyperlinkButton vitlink;
+    HyperlinkButton bclink;
+
 public:
 
     /** Set up the editor */
@@ -392,7 +412,13 @@ public:
             AudioProcessorEditor(processor),
             processor(processor) {
 
-        setLookAndFeel(&lookAndFeel);
+        LookAndFeel &lookAndFeel = getLookAndFeel();
+
+        lookAndFeel.setColour(Slider::ColourIds::thumbColourId, Colours::grey);
+        lookAndFeel.setColour(Slider::ColourIds::trackColourId, Colours::grey.darker());
+        lookAndFeel.setColour(Slider::ColourIds::backgroundColourId, Colours::grey.darker().withAlpha(0.5f));
+        lookAndFeel.setColour(Slider::ColourIds::rotarySliderFillColourId, Colours::grey.darker().withAlpha(0.5f));
+        lookAndFeel.setColour(Slider::ColourIds::rotarySliderOutlineColourId, Colours::grey.darker());
 
         setSize(500,400);
         setResizable(false, false);
@@ -402,7 +428,19 @@ public:
         createControlFor("release", Slider::RotaryHorizontalVerticalDrag, 200,200,100,100);
         createControlFor("dirt", Slider::LinearVertical, 300,100,100,200);
         createControlFor("space", Slider::LinearVertical, 400,100,100,200);
+        createControlFor("tone", Slider::LinearBar, 0,350,100,30, "%");
+        createControlFor("unison", Slider::LinearBar, 100,350,100,30);
+        createControlFor("master", Slider::LinearBar, 400,350,100,30, "dB");
 
+        vitlink.setURL(URL("https://www.vitling.xyz"));
+        vitlink.setButtonText("Vitling");
+        vitlink.setBounds(300,10,100,20);
+        bclink.setURL(URL("https://bowchurch.bandcamp.com"));
+        bclink.setButtonText("Bow Church");
+        bclink.setBounds(400,10,100,20);
+
+        addAndMakeVisible(vitlink);
+        addAndMakeVisible(bclink);
     }
 
     // We use this paint function to paint our custom background image
