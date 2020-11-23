@@ -16,6 +16,10 @@ Binaries for VST3, AU and Standalone apps are built automatically via GitHub Act
 means to test the Windows build. If you can test the Windows build then please let me know how it goes. Building for
 Linux should be simple to DIY with CMake.
 
+### Latest release:
+* [Crypt_macos_0.1.0.dmg](https://github.com/DavW/crypt/releases/download/v0.1.0/Crypt_macos_0.1.0.dmg)
+* [Crypt_windows-0.1.0.zip](https://github.com/DavW/crypt/releases/download/v0.1.0/Crypt_windows-0.1.0.zip)
+
 ## Support
 
 If you find this useful, then please consider supporting my work. You can do that by buying the music of [Bow Church](https://bowchurch.bandcamp.com)
