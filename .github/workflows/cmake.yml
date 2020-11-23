@@ -45,20 +45,8 @@ jobs:
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: cmake --build . --config $BUILD_TYPE --verbose
     
-    - name: Upload VST3
+    - name: Upload
       uses: actions/upload-artifact@v2.2.1
       with:
-        name: Crypt_VST3_${{ matrix.os }}
-        path: ${{runner.workspace}}/build/CryptSynthPlugin_artefacts/Release/VST3
-
-    - name: Upload AU
-      uses: actions/upload-artifact@v2.2.1
-      with:
-        name: Crypt_AU_${{ matrix.os }}
-        path: ${{runner.workspace}}/build/CryptSynthPlugin_artefacts/Release/AU
-
-    - name: Upload Standalone
-      uses: actions/upload-artifact@v2.2.1
-      with:
-        name: Crypt_Standalone_${{ matrix.os }}
-        path: ${{runner.workspace}}/build/CryptSynthPlugin_artefacts/Release/Standalone
+        name: Crypt_${{ matrix.os }}
+        path: ${{runner.workspace}}/build/CryptSynthPlugin_artefacts/Release
