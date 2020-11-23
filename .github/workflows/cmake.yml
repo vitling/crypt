@@ -17,7 +17,7 @@ jobs:
     
     strategy:
       matrix:
-        os: [macos-10.15, windows-latest]
+        os: [macos-latest, windows-latest]
 
     steps:
     - uses: actions/checkout@v2
@@ -44,9 +44,14 @@ jobs:
       shell: bash
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: cmake --build . --config $BUILD_TYPE --verbose
+
+    - name: Bundle
+      working-directory: ${{runner.workspace}}/build/CryptSynthPlugin_artefacts/Release
+      shell: bash
+      run: zip -r Crypt.zip AU VST3 Standalone
     
     - name: Upload
       uses: actions/upload-artifact@v2.2.1
       with:
         name: Crypt_${{ matrix.os }}
-        path: ${{runner.workspace}}/build/CryptSynthPlugin_artefacts/Release
+        path: ${{runner.workspace}}/build/CryptSynthPlugin_artefacts/Release/Crypt.zip
