@@ -49,11 +49,16 @@ jobs:
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: cmake --build . --config $BUILD_TYPE --verbose
 
+    - name: Zip
+      working-directory: ${{runner.workspace}}/build/CryptSynthPlugin_artefacts/Release/VST3
+      shell: bash
+      run: tar -czvf crypt-${{ matrix.os.name }}-vst3.tar.gz Crypt.vst3
+
     - name: Upload
       uses: actions/upload-artifact@v2.2.1
       with:
         name: crypt-${{ matrix.os.name }}
-        path: ${{runner.workspace}}/build/CryptSynthPlugin_artefacts/Release/VST3
+        path: ${{runner.workspace}}/build/CryptSynthPlugin_artefacts/Release/VST3/crypt-${{ matrix.os.name }}-vst3.tar.gz
 
   release:
     needs: build
@@ -66,7 +71,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            crypt-mac
-            crypt-windows
+            crypt-mac/crypt-mac-vst3.tar.gz
+            crypt-windows/crypt-windows-vst3.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
