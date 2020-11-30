@@ -45,13 +45,8 @@ jobs:
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: cmake --build . --config $BUILD_TYPE --verbose
 
-    - name: Compress
-      working-directory: ${{runner.workspace}}/build/CryptSynthPlugin_artefacts/Release
-      shell: bash
-      run: tar -zcvf crypt-${{ matrix.os }}.tar.gz $(ls -d */)
-    
     - name: Upload
       uses: actions/upload-artifact@v2.2.1
       with:
         name: crypt-${{ matrix.os }}
-        path: ${{runner.workspace}}/build/CryptSynthPlugin_artefacts/Release/crypt-${{ matrix.os }}.tar.gz
+        path: ${{runner.workspace}}/build/CryptSynthPlugin_artefacts/Release/VST3
