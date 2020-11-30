@@ -23,13 +23,13 @@ set that quarantine bit that is checked by the Gatekeeper software inside macOS.
 pasting the following line into the Terminal application and pressing enter.
 
 ```sh
-curl -L https://github.com/DavW/crypt/releases/download/v0.2.0/crypt-macos-0.2.0.tar.gz --output crypt-macos.tar.gz && tar --strip-components 1 -zxvf crypt-macos-0.2.0.tar.gz VST3/Crypt.vst3 && mkdir -p ~/Library/Audio/Plug-Ins/VST3/ && mv Crypt.vst3 ~/Library/Audio/Plug-Ins/VST3/ && echo "Crypt VST3 plugin installed successfully"
+curl -L https://github.com/DavW/crypt/releases/download/v0.2.0/crypt-macos-0.2.0.tar.gz --output crypt-macos.tar.gz && tar --strip-components 1 -zxvf crypt-macos.tar.gz VST3/Crypt.vst3 && mkdir -p ~/Library/Audio/Plug-Ins/VST3/ && mv Crypt.vst3 ~/Library/Audio/Plug-Ins/VST3/ && echo "Crypt VST3 plugin installed successfully"
 ```
 You should ***NEVER*** run random code snippets like this from the internet without understanding what they are doing, so for information purposes let me also break it down for you:
 
 First it downloads the plugin from GitHub and saves it:
 `curl -L https://github.com/DavW/crypt/releases/download/v0.2.0/crypt-macos-0.2.0.tar.gz --output crypt-macos.tar.gz`
-Next it extracts just the VST3 plugin onto your hard disk: `tar --strip-components 1 -zxvf crypt-macos-0.2.0.tar.gz VST3/Crypt.vst3`
+Next it extracts just the VST3 plugin onto your hard disk: `tar --strip-components 1 -zxvf crypt-macos.tar.gz VST3/Crypt.vst3`
 Then we make sure that you have a VST3 plugin folder on your system with `mkdir -p ~/Library/Audio/Plug-Ins/VST3/`
 Finally we copy the VST3 version of the plugin into your plugins folder
 `mv Crypt.vst3 ~/Library/Audio/Plug-Ins/VST3/`
