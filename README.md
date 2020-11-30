@@ -16,20 +16,22 @@ included as a submodule.
 
 Starting with macOS 10.15 Catalina, Apple have taken a sinister anti-competitive, anti-open-source and anti-indie-developer step to prevent
 developers from releasing software without also paying to join Apple's Developer Program. This means that it is impossible
-for me to provide a standard installer to you without paying Apple money.
+for me to provide a standard installer to you without paying Apple money. This is done under the guise of the anti-malware "notarization"
+process but with no access to the notarization process without paying, even for open source developers, they're effectively
+putting up a paywall to developing for macOS.
 
 As of version 10.15, there is a workaround, and that's to use cURL in the Terminal to download the software, which doesn't
 set that quarantine bit that is checked by the Gatekeeper software inside macOS. Therefore, you can install the plugin for macOS by copying and
 pasting the following line into the Terminal application and pressing enter.
 
 ```sh
-curl -L https://github.com/DavW/crypt/releases/download/v0.2.2/crypt-macos-vst3-0.2.2.zip --output crypt-macos-vst3.zip && tar -zxvf crypt-macos-vst3.zip && mkdir -p ~/Library/Audio/Plug-Ins/VST3/ && mv Crypt.vst3 ~/Library/Audio/Plug-Ins/VST3/ && echo "Crypt VST3 plugin installed successfully"
+curl -L https://github.com/DavW/crypt/releases/download/v0.2.2/crypt-mac-vst3.tar.gz --output crypt-mac-vst3.tar.gz && tar -zxvf crypt-mac-vst3.tar.gz && mkdir -p ~/Library/Audio/Plug-Ins/VST3/ && mv Crypt.vst3 ~/Library/Audio/Plug-Ins/VST3/ && echo "Crypt VST3 plugin installed successfully"
 ```
 You should ***NEVER*** run random code snippets like this from the internet without understanding what they are doing, so for information purposes let me also break it down for you:
 
 First it downloads the plugin from GitHub and saves it:
-`curl -L https://github.com/DavW/crypt/releases/download/vx.x.x/crypt-macos-x.x.x.tar.gz --output crypt-macos.tar.gz`
-Next it extracts the VST3 plugin onto your hard disk: `tar -zxvf crypt-macos-vst3.zip`
+`curl -L https://github.com/DavW/crypt/releases/download/vx.x.x/crypt-macos-x.x.x.tar.gz --output crypt-mac-vst3.tar.gz`
+Next it extracts the VST3 plugin onto your hard disk: `tar -zxvf crypt-mac-vst3.tar.gz`
 Then we make sure that you have a VST3 plugin folder on your system with `mkdir -p ~/Library/Audio/Plug-Ins/VST3/`
 Finally we move the VST3 version of the plugin into your plugins folder
 `mv Crypt.vst3 ~/Library/Audio/Plug-Ins/VST3/`
@@ -44,7 +46,7 @@ say on what software is and isn't allowed to run on the computers they produce, 
 Windows builds are also built by the GitHub Actions CD system, but I do not have a Windows computer available to verify that they work
 as expected. If you're a Windows user, please let me know how your experience is and whether it works or not.
 
-You can download whatever binaries that JUCE produces during the make process from the [Release Page](https://github.com/DavW/crypt/releases/tag/v0.2.0) and copy them into your VST3 plugin folder
+You can download whatever binaries that JUCE produces during the make process from the [Release Page](https://github.com/DavW/crypt/releases) and copy them into your VST3 plugin folder
 
 ## Support
 
