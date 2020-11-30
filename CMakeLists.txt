@@ -16,12 +16,12 @@ cmake_minimum_required(VERSION 3.15)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-project(CRYPT_SYNTH_PLUGIN VERSION 0.0.1)
+project(CRYPT_SYNTH_PLUGIN VERSION 0.2.0)
 
 add_subdirectory(JUCE)
 
 juce_add_plugin(CryptSynthPlugin
-        VERSION 0.0.1                               # Set this if the plugin version is different to the project version
+        VERSION 0.2.0                               # Set this if the plugin version is different to the project version
         ICON_BIG icon.png                              # ICON_* arguments specify a path to an image file to use as an icon for the Standalone
         ICON_SMALL icon.png
         COMPANY_NAME Vitling                          # Specify the name of the plugin's author

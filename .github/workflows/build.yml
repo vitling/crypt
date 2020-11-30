@@ -46,12 +46,12 @@ jobs:
       run: cmake --build . --config $BUILD_TYPE --verbose
 
     - name: Compress
-      working-directory: {{runner.workspace}}/build/CryptSynthPlugin_artefacts/Release
+      working-directory: ${{runner.workspace}}/build/CryptSynthPlugin_artefacts/Release
       shell: bash
-      run: tar -zcvf crypt-${{ matrix.os }}.tar.gz AU Standalone VST3
+      run: tar -zcvf crypt-${{ matrix.os }}.tar.gz $(ls -d */)
     
     - name: Upload
       uses: actions/upload-artifact@v2.2.1
       with:
-        name: crypt_${{ matrix.os }}
-        path: ${{runner.workspace}}/build/CryptSynthPlugin_artefacts/crypt-${{ matrix.os }}.tar.gz
+        name: crypt-${{ matrix.os }}
+        path: ${{runner.workspace}}/build/CryptSynthPlugin_artefacts/Release/crypt-${{ matrix.os }}.tar.gz
