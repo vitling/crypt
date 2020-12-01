@@ -14,11 +14,16 @@ included as a submodule.
 
 ### Mac
 
+On versions of macOS pre-Catalina, you can simply grab the latest build from the [Release Page](https://github.com/DavW/crypt/releases)
+and copy it into your `/Library/Audio/Plug-Ins/VST3` or `~/Library/Audio/Plug-Ins/VST3` folder.
+
 Starting with macOS 10.15 Catalina, Apple have taken a sinister anti-competitive, anti-open-source and anti-indie-developer step to prevent
 developers from releasing software without also paying to join Apple's Developer Program. This means that it is impossible
 for me to provide a standard installer to you without paying Apple money. This is done under the guise of the anti-malware "notarization"
 process but with no access to the notarization process without paying, even for open source developers, they're effectively
 putting up a paywall to developing for macOS.
+
+#### Workaround 1
 
 As of version 10.15, there is a workaround, and that's to use cURL in the Terminal to download the software, which doesn't
 set that quarantine bit that is checked by the Gatekeeper software inside macOS. Therefore, you can install the plugin for macOS by copying and
@@ -40,6 +45,17 @@ If you think that Open Source, Freeware and Indie developers shouldn't have to d
 for their (already massively expensive and profitable) hardware, then I suggest you contact Apple to complain, and contact your elected representatives
 to push for legislation outlawing this kind of behaviour. Not only does it have cost implications for developers, but it also gives Apple the final
 say on what software is and isn't allowed to run on the computers they produce, paving the way for censorship and power consolidation on their part.
+
+#### Workaround 2
+
+The alternative to the above, is to download the binary as normal, then unset the quarantine bit on the archive you've just downloaded, then copy it into
+your plugin folder yourself. You can do this with the `xattr` command
+
+```bash
+xattr -d com.apple.quarantine crypt-mac-vst3.tar.gz
+```
+
+After doing this you should be able to extract the archive and copy the plugin into your plugins folder and have it work without any problems
 
 ### Windows
 
