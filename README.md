@@ -48,6 +48,24 @@ as expected. If you're a Windows user, please let me know how your experience is
 
 You can download whatever binaries that JUCE produces during the make process from the [Release Page](https://github.com/DavW/crypt/releases) and copy them into your VST3 plugin folder
 
+
+### Linux
+
+Building on Linux should be fairly straightforward, but I had some slightly confusing linker errors when I tried. Let me know if you manage to get it to work.
+
+#### Dependencies
+```cmake g++ libfreetype6-dev libx11-dev libxinerama-dev libxrandr-dev libxcursor-dev mesa-common-dev libasound2-dev freeglut3-dev libxcomposite-dev pkg-config```
+
+These are Debian/Ubuntu package names (install with `sudo apt-get install ` and paste the above), you may need to translate for your distro
+
+#### Build
+
+```bash
+git clone --recursive --shallow-submodules https://github.com/DavW/crypt.git
+cmake -S crypt -B crypt-build
+cmake --build crypt-build --config Release --verbose
+```
+
 ## Support
 
 If you find this useful, then please consider supporting my work. You can do that by buying the music of [Bow Church](https://bowchurch.bandcamp.com)
