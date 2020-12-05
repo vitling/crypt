@@ -15,8 +15,9 @@ cmake_minimum_required(VERSION 3.15)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_OSX_DEPLOYMENT_TARGET 10.10)
 
-project(CRYPT_SYNTH_PLUGIN VERSION 0.2.0)
+project(CRYPT_SYNTH_PLUGIN VERSION 0.3.0)
 
 add_subdirectory(JUCE)
 
@@ -31,12 +32,12 @@ juce_add_plugin(CryptSynthPlugin
         IS_MIDI_EFFECT FALSE                 # Is this plugin a MIDI effect?
         EDITOR_WANTS_KEYBOARD_FOCUS FALSE    # Does the editor need keyboard focus?
         COPY_PLUGIN_AFTER_BUILD TRUE        # Should the plugin be installed to a default location after building?
-        PLUGIN_MANUFACTURER_CODE VITL               # A four-character manufacturer id with at least one upper-case character
-        PLUGIN_CODE CRPT                            # A unique four-character plugin id with at least one upper-case character
+        PLUGIN_MANUFACTURER_CODE Vitl               # A four-character manufacturer id with at least one upper-case character
+        PLUGIN_CODE Crpt                            # A unique four-character plugin id with at least one upper-case character
         DESCRIPTION "Hyper-Unison Synthesiser from Bow Church/Vitling"
         VST3_CATEGORIES "Instrument Synth Stereo"
-        AU_MAIN_TYPE "kAudioUnitType_Generator"
-        FORMATS VST3                  # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
+        AU_MAIN_TYPE "kAudioUnitType_MusicDevice"
+        FORMATS VST3 AU                  # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
         PRODUCT_NAME "Crypt")        # The name of the final executable, which can differ from the target name
 
 

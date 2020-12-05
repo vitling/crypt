@@ -80,6 +80,7 @@ private:
         }
     }
 
+
     /** Clamp value between -1.0f and 1.0f */
     inline float clamp(float value) {
         return value < -1.0f ? -1.0f : value > 1.0f ? 1.0f : value;
