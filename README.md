@@ -30,7 +30,7 @@ set that quarantine bit that is checked by the Gatekeeper software inside macOS.
 pasting the following line into the Terminal application and pressing enter.
 
 ```sh
-curl -L https://github.com/DavW/crypt/releases/download/v0.2.2/crypt-mac-vst3.tar.gz --output crypt-mac-vst3.tar.gz && tar -zxvf crypt-mac-vst3.tar.gz && mkdir -p ~/Library/Audio/Plug-Ins/VST3/ && mv Crypt.vst3 ~/Library/Audio/Plug-Ins/VST3/ && echo "Crypt VST3 plugin installed successfully"
+curl -L https://github.com/DavW/crypt/releases/download/v0.3.0/crypt-mac-vst3.tar.gz --output crypt-mac-vst3.tar.gz && tar -zxvf crypt-mac-vst3.tar.gz && mkdir -p ~/Library/Audio/Plug-Ins/VST3/ && mv Crypt.vst3 ~/Library/Audio/Plug-Ins/VST3/ && echo "Crypt VST3 plugin installed successfully"
 ```
 You should ***NEVER*** run random code snippets like this from the internet without understanding what they are doing, so for information purposes let me also break it down for you:
 
