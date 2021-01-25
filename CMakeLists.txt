@@ -15,16 +15,16 @@ cmake_minimum_required(VERSION 3.15)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_OSX_DEPLOYMENT_TARGET 10.12)
+set(CMAKE_OSX_DEPLOYMENT_TARGET 10.12 CACHE STRING "Minimum OS X deployment version" FORCE)
 
 project(CRYPT_SYNTH_PLUGIN VERSION 0.3.0)
 
 add_subdirectory(JUCE)
 
 juce_add_plugin(CryptSynthPlugin
-        VERSION 0.2.0                               # Set this if the plugin version is different to the project version
-        ICON_BIG icon.png                              # ICON_* arguments specify a path to an image file to use as an icon for the Standalone
-        ICON_SMALL icon.png
+        VERSION 0.3.0                               # Set this if the plugin version is different to the project version
+        ICON_BIG ${CMAKE_CURRENT_SOURCE_DIR}/icon.png                              # ICON_* arguments specify a path to an image file to use as an icon for the Standalone
+        ICON_SMALL ${CMAKE_CURRENT_SOURCE_DIR}/icon.png
         COMPANY_NAME Vitling                          # Specify the name of the plugin's author
         IS_SYNTH TRUE                       # Is this a synth or an effect?
         NEEDS_MIDI_INPUT TRUE               # Does the plugin need midi input?
@@ -38,6 +38,8 @@ juce_add_plugin(CryptSynthPlugin
         VST3_CATEGORIES "Instrument Synth Stereo"
         AU_MAIN_TYPE "kAudioUnitType_MusicDevice"
         FORMATS VST3 AU                  # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
+        BUNDLE_ID "xyz.vitling.plugins.crypt"
+        HARDENED_RUNTIME_ENABLED TRUE
         PRODUCT_NAME "Crypt")        # The name of the final executable, which can differ from the target name
 
 
