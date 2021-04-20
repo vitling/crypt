@@ -55,7 +55,7 @@ target_compile_definitions(CryptSynthPlugin
         JUCE_VST3_CAN_REPLACE_VST2=0)
 
 juce_add_binary_data(CryptSynthPluginData SOURCES ui.png)
-
+set_target_properties(CryptSynthPluginData PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 target_link_libraries(CryptSynthPlugin PRIVATE
         CryptSynthPluginData
