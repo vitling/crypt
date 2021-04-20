@@ -45,8 +45,9 @@ These are Debian/Ubuntu package names (install with `sudo apt-get install ` and 
 
 ```bash
 git clone --recursive --shallow-submodules https://github.com/DavW/crypt.git
-cmake -S crypt -B crypt-build
-cmake --build crypt-build --config Release --verbose
+cd crypt
+cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
+cmake --build build --parallel
 ```
 
 ## Support
