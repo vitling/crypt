@@ -52,7 +52,11 @@ target_compile_definitions(CryptSynthPlugin
         PUBLIC
         JUCE_WEB_BROWSER=0
         JUCE_USE_CURL=0
-        JUCE_VST3_CAN_REPLACE_VST2=0)
+        JUCE_VST3_CAN_REPLACE_VST2=0
+
+        # We don't have to display the splash screen since we're using JUCE
+        # under the GPL
+        JUCE_DISPLAY_SPLASH_SCREEN=0)
 
 juce_add_binary_data(CryptSynthPluginData SOURCES ui.png)
 set_target_properties(CryptSynthPluginData PROPERTIES POSITION_INDEPENDENT_CODE ON)
