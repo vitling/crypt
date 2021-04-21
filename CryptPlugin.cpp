@@ -411,7 +411,9 @@ public:
     /** Set up the editor */
     explicit CryptEditor(CryptAudioProcessor &processor):
             AudioProcessorEditor(processor),
-            processor(processor) {
+            processor(processor),
+            vitlink("Vitling", URL("https://www.vitling.xyz")),
+            bclink("Bow Church", URL("https://bowchurch.bandcamp.com")) {
 
         LookAndFeel &lookAndFeel = getLookAndFeel();
 
@@ -433,11 +435,7 @@ public:
         createControlFor("unison", Slider::LinearBar, 100,350,100,30);
         createControlFor("master", Slider::LinearBar, 400,350,100,30, "dB");
 
-        vitlink.setURL(URL("https://www.vitling.xyz"));
-        vitlink.setButtonText("Vitling");
         vitlink.setBounds(300,10,100,20);
-        bclink.setURL(URL("https://bowchurch.bandcamp.com"));
-        bclink.setButtonText("Bow Church");
         bclink.setBounds(400,10,100,20);
 
         addAndMakeVisible(vitlink);
