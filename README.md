@@ -1,11 +1,11 @@
 
 # Crypt
-![Build](https://github.com/DavW/crypt/workflows/Build/badge.svg)
+![Build](https://github.com/vitling/crypt/workflows/Build/badge.svg)
 
 **Crypt** is a software synthesiser plugin designed for creating spacious cold hyper-unisoned
 synth sounds; developed by [Vitling](https://www.vitling.xyz) for the [Bow Church](http://bowchurch.bandcamp.com/) project.
 
-![Screenshot](https://github.com/DavW/crypt/blob/main/screenshot.jpg?raw=true)
+![Screenshot](https://github.com/vitling/crypt/blob/main/screenshot.jpg?raw=true)
 
 It is written in C++20 and depends on the [JUCE](https://github.com/juce-framework/JUCE) framework, which is
 included as a submodule.
@@ -29,7 +29,7 @@ If you use the Mac version, please consider [donating some money](https://paypal
 Windows builds are also built by the GitHub Actions CD system, but I do not have a Windows computer available to verify that they work
 as expected. If you're a Windows user, please let me know how your experience is and whether it works or not.
 
-You can download whatever binaries that JUCE produces during the make process from the [Release Page](https://github.com/DavW/crypt/releases) and copy them into your VST3 plugin folder
+You can download whatever binaries that JUCE produces during the make process from the [Release Page](https://github.com/vitling/crypt/releases) and copy them into your VST3 plugin folder
 
 
 ### Linux
@@ -44,7 +44,7 @@ These are Debian/Ubuntu package names (install with `sudo apt-get install ` and 
 #### Build
 
 ```bash
-git clone --recursive --shallow-submodules https://github.com/DavW/crypt.git
+git clone --recursive --shallow-submodules https://github.com/vitling/crypt.git
 cd crypt
 cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
 cmake --build build --parallel
