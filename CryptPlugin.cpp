@@ -335,11 +335,14 @@ public:
         audio.applyGain(pow(10, masterDb/10));
     }
 
+#if !JUCE_AUDIOPROCESSOR_NO_GUI
     // We need to defer this implementation until the end of the file, when we have defined our editor
     juce::AudioProcessorEditor* createEditor() override;
 
-    // Various metadata about the plugin
     bool hasEditor() const override { return true; }
+#endif
+
+    // Various metadata about the plugin
     const String getName() const override { return "Crypt";}
     bool acceptsMidi() const override {return true;}
     bool producesMidi() const override {return false;}
@@ -372,6 +375,7 @@ public:
     }
 };
 
+#if !JUCE_AUDIOPROCESSOR_NO_GUI
 /** GUI for the plugin */
 class CryptEditor: public AudioProcessorEditor {
 private:
@@ -451,12 +455,15 @@ public:
 
     }
 };
+#endif
 
 AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new CryptAudioProcessor();
 }
 
+#if !JUCE_AUDIOPROCESSOR_NO_GUI
 juce::AudioProcessorEditor *CryptAudioProcessor::createEditor() {
     return new CryptEditor(*this);
 }
+#endif
