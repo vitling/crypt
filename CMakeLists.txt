@@ -55,6 +55,10 @@ target_compile_definitions(CryptSynthPlugin
         JUCE_USE_CURL=0
         JUCE_VST3_CAN_REPLACE_VST2=0
 
+        JucePlugin_WantsLV2Latency=0
+        JucePlugin_WantsLV2State=0
+        JucePlugin_WantsLV2TimePos=0
+
         # We don't have to display the splash screen since we're using JUCE
         # under the GPL
         JUCE_DISPLAY_SPLASH_SCREEN=0)
