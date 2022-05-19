@@ -52,6 +52,29 @@ private:
         return (2.0f * angle/TAU) - 1;
     }
 
+    /** implementation of poly blep function **/
+    /** source: https://www.metafunction.co.uk/post/all-about-digital-oscillators-part-1-aliasing-foldover **/
+    static inline float poly_blep(float t, float increment) {
+        double dt = increment / TAU;
+
+        float output = t;
+
+        for (int i; i < 1; i++) {
+            if (output < dt)
+            {
+                output /= dt;
+                return output + output - output * output - 1.0;
+            }
+            else if (output > 1.0 - dt)
+            {
+                output = (output - 1.0) / dt;
+                return output * output + output + output + 1.0;
+            }
+        }
+
+        return output;
+    }
+
     /** Function to do the slightly awkward work of pulling a scaled (non-normalised) value from a parameter name */
     float getParameterValue(StringRef parameterName) {
         auto param = state.getParameter(parameterName);
@@ -204,7 +227,8 @@ public:
                 float lPan = 1.0f - rPan;
 
                 float wave = saw(o.angle);
-                float shaped = clamp(wave + copysign(shape, wave));
+                float AiWave = poly_blep(wave, o.increment);
+                float shaped = clamp(AiWave + copysign(shape, AiWave));
                 float toned = tone * shaped + (1.0f - tone) * wtSin(o.angle + 3 * TAU / 4);
 
                 outL += toned * lPan;
