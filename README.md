@@ -46,7 +46,7 @@ These are Debian/Ubuntu package names (install with `sudo apt-get install ` and 
 ```bash
 git clone --recursive --shallow-submodules https://github.com/vitling/crypt.git
 cd crypt
-cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
+cmake -Bbuild -DCMAKE_BUILD_TYPE=Release  # For MacOS universal binary add "-DCMAKE_OSX_ARCHITECTURES=arm64;x86_64"
 cmake --build build --parallel
 ```
 
