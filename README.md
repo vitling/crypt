@@ -1,6 +1,17 @@
 
 # Crypt
-![Build](https://github.com/vitling/crypt/workflows/Build/badge.svg)
+
+## IF YOU ARE A MUSIC PRODUCER LOOKING FOR THE LATEST VERSION
+
+v2 is out in binary form at the following location: [CRYPT](https://www.vitling.xyz/crypt). It's lightyears ahead of the one that lives here on GitHub right now.
+
+![V2 Screenshot](https://www.vitling.xyz/crypt/resources/crypt-screenshot.jpg)
+
+It's basically a total rewrite with a brand new UI, and so I haven't been doing the development actively in this repo.
+
+I'm currently working on tidying up the v2 code base, cleaning out secrets from the Git history, and otherwise making v2 available under the GPL here too. I know that most of my audience for this are non-developers, so I chose to prioritise those. If you're hanging on waiting for v2 source to do a Linux build, feel free to write me an encouraging email: hello AT vitling DOT xyz
+
+## The following information is about the superceded v0 beta version:
 
 **Crypt** is a software synthesiser plugin designed for creating spacious cold hyper-unisoned
 synth sounds; developed by [Vitling](https://www.vitling.xyz) for the [Bow Church](http://bowchurch.bandcamp.com/) project.
