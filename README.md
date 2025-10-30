@@ -48,7 +48,7 @@ I kindly request (but cannot legally enforce) that you do not use the name or br
 ## Support
 
 If you find this useful, then please consider supporting me. This project took a lot of serious work that nobody was paying me to do.
-[I accept monetary tips](https://ko-fi.com/vitling).
+[I accept monetary tips](https://ko-fi.com/vitling) and [Github Sponsors](https://github.com/sponsors/vitling)
 
 You can also buy the music of [Bow Church](https://bowchurch.bandcamp.com)
 or [Vitling](https://vitling.bandcamp.com); or listen and add to playlists on Spotify and/or SoundCloud.
