@@ -17,14 +17,14 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_OSX_DEPLOYMENT_TARGET 10.12 CACHE STRING "Minimum OS X deployment version" FORCE)
 
-project(CRYPT_SYNTH_PLUGIN VERSION 0.3.0)
+project(CRYPT_SYNTH_PLUGIN VERSION 2.0.1)
 
 add_subdirectory(JUCE)
 
-juce_add_plugin(CryptSynthPlugin
-        VERSION 0.3.0                               # Set this if the plugin version is different to the project version
-        ICON_BIG ${CMAKE_CURRENT_SOURCE_DIR}/icon.png                              # ICON_* arguments specify a path to an image file to use as an icon for the Standalone
-        ICON_SMALL ${CMAKE_CURRENT_SOURCE_DIR}/icon.png
+juce_add_plugin(Crypt2SynthPlugin
+        VERSION 2.0.1                               # Set this if the plugin version is different to the project version
+        ICON_BIG ${CMAKE_CURRENT_SOURCE_DIR}/resources/crypt-icon.png                              # ICON_* arguments specify a path to an image file to use as an icon for the Standalone
+        ICON_SMALL ${CMAKE_CURRENT_SOURCE_DIR}/resources/crypt-icon.png
         COMPANY_NAME Vitling                          # Specify the name of the plugin's author
         IS_SYNTH TRUE                       # Is this a synth or an effect?
         NEEDS_MIDI_INPUT TRUE               # Does the plugin need midi input?
@@ -33,22 +33,22 @@ juce_add_plugin(CryptSynthPlugin
         EDITOR_WANTS_KEYBOARD_FOCUS FALSE    # Does the editor need keyboard focus?
         COPY_PLUGIN_AFTER_BUILD TRUE        # Should the plugin be installed to a default location after building?
         PLUGIN_MANUFACTURER_CODE Vitl               # A four-character manufacturer id with at least one upper-case character
-        PLUGIN_CODE Crpt                            # A unique four-character plugin id with at least one upper-case character
+        PLUGIN_CODE Crp2                            # A unique four-character plugin id with at least one upper-case character
         DESCRIPTION "Hyper-Unison Synthesiser from Bow Church/Vitling"
         VST3_CATEGORIES "Instrument Synth Stereo"
         AU_MAIN_TYPE "kAudioUnitType_MusicDevice"
-        FORMATS VST3 AU                  # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
-        BUNDLE_ID "xyz.vitling.plugins.crypt"
+        FORMATS VST3 AU Standalone                 # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
+        BUNDLE_ID "xyz.vitling.plugins.crypt2"
         HARDENED_RUNTIME_ENABLED TRUE
-        PRODUCT_NAME "Crypt")        # The name of the final executable, which can differ from the target name
+        PRODUCT_NAME "Crypt2")        # The name of the final executable, which can differ from the target name
 
 
-juce_generate_juce_header(CryptSynthPlugin)
+juce_generate_juce_header(Crypt2SynthPlugin)
 
-target_sources(CryptSynthPlugin PRIVATE
-        CryptPlugin.cpp)
+target_sources(Crypt2SynthPlugin PRIVATE
+        src/CryptPlugin.cpp)
 
-target_compile_definitions(CryptSynthPlugin
+target_compile_definitions(Crypt2SynthPlugin
         PUBLIC
         JUCE_WEB_BROWSER=0
         JUCE_USE_CURL=0
@@ -58,9 +58,11 @@ target_compile_definitions(CryptSynthPlugin
         # under the GPL
         JUCE_DISPLAY_SPLASH_SCREEN=0)
 
-juce_add_binary_data(CryptSynthPluginData SOURCES ui.png)
-set_target_properties(CryptSynthPluginData PROPERTIES POSITION_INDEPENDENT_CODE ON)
+juce_add_binary_data(Crypt2SynthPluginData SOURCES resources/Gothica-Book.ttf resources/bg.jpg resources/presets.xml resources/keyboard-icon.png)
+set_target_properties(Crypt2SynthPluginData PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
-target_link_libraries(CryptSynthPlugin PRIVATE
-        CryptSynthPluginData
-        juce::juce_audio_utils)
+target_link_libraries(Crypt2SynthPlugin PRIVATE
+        Crypt2SynthPluginData
+        juce::juce_audio_utils
+        juce::juce_dsp)
+        

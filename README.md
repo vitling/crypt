@@ -1,22 +1,10 @@
 
 # Crypt
 
-## IF YOU ARE A MUSIC PRODUCER LOOKING FOR THE LATEST VERSION
-
-v2 is out in binary form at the following location: [CRYPT](https://www.vitling.xyz/crypt). It's lightyears ahead of the one that lives here on GitHub right now.
-
-![V2 Screenshot](https://www.vitling.xyz/crypt/resources/crypt-screenshot.jpg)
-
-It's basically a total rewrite with a brand new UI, and so I haven't been doing the development actively in this repo.
-
-I'm currently working on tidying up the v2 code base, cleaning out secrets from the Git history, and otherwise making v2 available under the GPL here too. I know that most of my audience for this are non-developers, so I chose to prioritise those. If you're hanging on waiting for v2 source to do a Linux build, feel free to write me an encouraging email: hello AT vitling DOT xyz
-
-## The following information is about the superceded v0 beta version:
-
 **Crypt** is a software synthesiser plugin designed for creating spacious cold hyper-unisoned
 synth sounds; developed by [Vitling](https://www.vitling.xyz) for the [Bow Church](http://bowchurch.bandcamp.com/) project.
 
-![Screenshot](https://github.com/vitling/crypt/blob/main/screenshot.jpg?raw=true)
+![V2 Screenshot](https://www.vitling.xyz/crypt/resources/crypt-screenshot.jpg)
 
 It is written in C++20 and depends on the [JUCE](https://github.com/juce-framework/JUCE) framework, which is
 included as a submodule.
@@ -25,27 +13,11 @@ included as a submodule.
 
 ### Mac & Windows
 
-Go to the [Vitling.xyz plugin download page](https://www.vitling.xyz/plugins) for conveniently packaged donwloads for **Mac** and **Windows**
-
-#### Extra notes for Mac users
-
-I have now finally joined the Apple Developer Program, so I am pleased to be able to offer proper installers and notarized binaries for Mac
-
-However, the Apple Developer Program still costs money, even for an open source developer. I suggest you write to Apple and lawmakers in your jurisdiction and complain about their anti-competitive practices.
-
-If you use the Mac version, please consider [donating some money](https://paypal.me/vitling) to me to offset the cost I have incurred to make this possible.
-
-### Windows
-
-Windows builds are also built by the GitHub Actions CD system, but I do not have a Windows computer available to verify that they work
-as expected. If you're a Windows user, please let me know how your experience is and whether it works or not.
-
-You can download whatever binaries that JUCE produces during the make process from the [Release Page](https://github.com/vitling/crypt/releases) and copy them into your VST3 plugin folder
-
+Go to the [Crypt plugin download page](https://www.vitling.xyz/crypt) for conveniently packaged donwloads for **Mac** and **Windows**
 
 ### Linux
 
-Building on Linux should be fairly straightforward, but I had some slightly confusing linker errors when I tried. Let me know if you manage to get it to work.
+Building on Linux should be fairly straightforward, but I haven't done much testing on that front myself. 
 
 #### Dependencies
 ```cmake g++ libfreetype6-dev libx11-dev libxinerama-dev libxrandr-dev libxcursor-dev mesa-common-dev libasound2-dev freeglut3-dev libxcomposite-dev pkg-config```
@@ -61,16 +33,29 @@ cmake -Bbuild -DCMAKE_BUILD_TYPE=Release  # For MacOS universal binary add "-DCM
 cmake --build build --parallel
 ```
 
+## Contribute
+
+This plugin is published open source primarily so that (a) Linux users are able to build from source and (b) people can learn from what I have learned and created. This is not intended to be a project that gets features added over time ad infinitum.
+
+As such, in general, I will NOT accept Pull Requests which add new features to the plugin. Feel free to make suggestions, especially if you can back it up with a solid use case, but I make no promises.
+
+I will, in general, accept pull requests which fix bugs or allow a broader adoption of the plugin, for example adjustments to make it build for more platforms.
+
+If you want to take components of Crypt and do something new with them, then that is your right under the [GPL3 license](https://www.gnu.org/licenses/gpl-3.0.html), you may take code from this for your own plugin, but if you do then legally that plugin must also be published under the GPL3 license.
+
+I kindly request (but cannot legally enforce) that you do not use the name or branding if you create a new plugin based on parts of Crypt.
+
 ## Support
 
-If you find this useful, then please consider supporting my work. You can do that by buying the music of [Bow Church](https://bowchurch.bandcamp.com)
+If you find this useful, then please consider supporting me. This project took a lot of serious work that nobody was paying me to do.
+[I accept monetary tips](https://ko-fi.com/vitling).
+
+You can also buy the music of [Bow Church](https://bowchurch.bandcamp.com)
 or [Vitling](https://vitling.bandcamp.com); or listen and add to playlists on Spotify and/or SoundCloud.
 
-You can also see my [website](https://www.vitling.xyz), [Instagram](https://instagram.com/vvitling) or [Twitter](https://twitter.com/vvitling) to follow
-my latest work; and/or contact me to hire me for stuff.
+You can also see my [website](https://www.vitling.xyz) for my latest work; and/or contact me to hire me for stuff.
 
 ## License
 
 This plugin is free software, licensed under the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.html). 
 
-However, the JUCE framework that it depends on as a submodule has [its own license](https://github.com/juce-framework/JUCE/blob/master/LICENSE.md)

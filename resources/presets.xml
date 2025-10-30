@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<presets>
+  <preset>
+    <name>cold winter pad</name>
+    <state>
+      <PARAM id="Amplitude.Attack" value="0.07500000298023224"/>
+      <PARAM id="Amplitude.Decay" value="0.4240000247955322"/>
+      <PARAM id="Amplitude.Release" value="0.4780000150203705"/>
+      <PARAM id="Amplitude.Sustain" value="0.7199999690055847"/>
+      <PARAM id="Cutoff" value="20000.0"/>
+      <PARAM id="DelayFeedback" value="0.429999977350235"/>
+      <PARAM id="DelayMix" value="0.4099999964237213"/>
+      <PARAM id="DelayTime" value="250.9000091552734"/>
+      <PARAM id="Dirt" value="0.0"/>
+      <PARAM id="Filter.Attack" value="0.1469999998807907"/>
+      <PARAM id="Filter.Decay" value="0.2000000029802322"/>
+      <PARAM id="Filter.Release" value="0.3750000298023224"/>
+      <PARAM id="Filter.Sustain" value="0.8199999928474426"/>
+      <PARAM id="FilterEnv" value="0.378000020980835"/>
+      <PARAM id="Master" value="0.0"/>
+      <PARAM id="PhaserDepth" value="0.2299999892711639"/>
+      <PARAM id="PhaserMix" value="0.07999999821186066"/>
+      <PARAM id="PhaserRate" value="0.2099999934434891"/>
+      <PARAM id="PitchBendRange" value="2.0"/>
+      <PARAM id="Resonance" value="1.629999995231628"/>
+      <PARAM id="Shape" value="0.0"/>
+      <PARAM id="Space" value="0.5099999904632568"/>
+      <PARAM id="Spread" value="0.05900000408291817"/>
+      <PARAM id="Unison" value="32.0"/>
+    </state>
+  </preset>
+  <preset>
+    <name>soft melancholy pad</name>
+    <state>
+      <PARAM id="Amplitude.Attack" value="0.3130000233650208"/>
+      <PARAM id="Amplitude.Decay" value="0.4240000247955322"/>
+      <PARAM id="Amplitude.Release" value="0.8260000348091125"/>
+      <PARAM id="Amplitude.Sustain" value="0.7199999690055847"/>
+      <PARAM id="Cutoff" value="333.0"/>
+      <PARAM id="DelayFeedback" value="0.6100000143051147"/>
+      <PARAM id="DelayMix" value="0.449999988079071"/>
+      <PARAM id="DelayTime" value="295.0"/>
+      <PARAM id="Dirt" value="0.0"/>
+      <PARAM id="Filter.Attack" value="0.2290000170469284"/>
+      <PARAM id="Filter.Decay" value="0.2000000029802322"/>
+      <PARAM id="Filter.Release" value="0.5"/>
+      <PARAM id="Filter.Sustain" value="0.8199999928474426"/>
+      <PARAM id="FilterEnv" value="0.4300000071525574"/>
+      <PARAM id="Master" value="0.0"/>
+      <PARAM id="PhaserDepth" value="0.2299999892711639"/>
+      <PARAM id="PhaserMix" value="0.0"/>
+      <PARAM id="PhaserRate" value="0.2099999934434891"/>
+      <PARAM id="PitchBendRange" value="2.0"/>
+      <PARAM id="Resonance" value="1.230000019073486"/>
+      <PARAM id="Shape" value="0.3700000047683716"/>
+      <PARAM id="Space" value="0.3199999928474426"/>
+      <PARAM id="Spread" value="0.05100000277161598"/>
+      <PARAM id="Unison" value="13.0"/>
+    </state>
+  </preset>
+  <preset>
+    <name>trance sequence ready</name>
+    <state>
+      <PARAM id="Amplitude.Attack" value="0.02000000141561031"/>
+      <PARAM id="Amplitude.Decay" value="0.2540000081062317"/>
+      <PARAM id="Amplitude.Release" value="0.1890000104904175"/>
+      <PARAM id="Amplitude.Sustain" value="0.5299999713897705"/>
+      <PARAM id="Cutoff" value="272.0"/>
+      <PARAM id="DelayFeedback" value="0.4699999988079071"/>
+      <PARAM id="DelayMix" value="0.239999994635582"/>
+      <PARAM id="DelayTime" value="295.0"/>
+      <PARAM id="Dirt" value="0.0"/>
+      <PARAM id="Filter.Attack" value="0.003000000026077032"/>
+      <PARAM id="Filter.Decay" value="0.1200000047683716"/>
+      <PARAM id="Filter.Release" value="0.2670000195503235"/>
+      <PARAM id="Filter.Sustain" value="0.1599999964237213"/>
+      <PARAM id="FilterEnv" value="0.8920000195503235"/>
+      <PARAM id="Master" value="0.0"/>
+      <PARAM id="PhaserDepth" value="0.2299999892711639"/>
+      <PARAM id="PhaserMix" value="0.5299999713897705"/>
+      <PARAM id="PhaserRate" value="0.2099999934434891"/>
+      <PARAM id="PitchBendRange" value="2.0"/>
+      <PARAM id="Resonance" value="2.869999885559082"/>
+      <PARAM id="Shape" value="0.01999999955296516"/>
+      <PARAM id="Space" value="0.1599999964237213"/>
+      <PARAM id="Spread" value="0.03100000135600567"/>
+      <PARAM id="Unison" value="7.0"/>
+    </state>
+  </preset>
+  <preset>
+    <name>thick percussive bass</name>
+    <state>
+      <PARAM id="Amplitude.Attack" value="0.01400000043213367"/>
+      <PARAM id="Amplitude.Decay" value="0.4240000247955322"/>
+      <PARAM id="Amplitude.Release" value="0.1760000139474869"/>
+      <PARAM id="Amplitude.Sustain" value="0.0"/>
+      <PARAM id="Cutoff" value="107.0"/>
+      <PARAM id="DelayFeedback" value="0.4699999988079071"/>
+      <PARAM id="DelayMix" value="0.1499999910593033"/>
+      <PARAM id="DelayTime" value="232.5"/>
+      <PARAM id="Dirt" value="0.0"/>
+      <PARAM id="Filter.Attack" value="0.002000000094994903"/>
+      <PARAM id="Filter.Decay" value="0.135000005364418"/>
+      <PARAM id="Filter.Release" value="0.1270000040531158"/>
+      <PARAM id="Filter.Sustain" value="0.1599999964237213"/>
+      <PARAM id="FilterEnv" value="0.9270000457763672"/>
+      <PARAM id="Master" value="0.0"/>
+      <PARAM id="PhaserDepth" value="0.08999999612569809"/>
+      <PARAM id="PhaserMix" value="0.2699999809265137"/>
+      <PARAM id="PhaserRate" value="0.2199999988079071"/>
+      <PARAM id="PitchBendRange" value="2.0"/>
+      <PARAM id="Resonance" value="3.149999856948853"/>
+      <PARAM id="Shape" value="0.5199999809265137"/>
+      <PARAM id="Space" value="0.0"/>
+      <PARAM id="Spread" value="0.01800000108778477"/>
+      <PARAM id="Unison" value="4.0"/>
+    </state>
+  </preset>
+    <preset>
+    <name>epic hypersaw</name>
+    <state>
+      <PARAM id="Amplitude.Attack" value="0.2650000154972076"/>
+      <PARAM id="Amplitude.Decay" value="0.4240000247955322"/>
+      <PARAM id="Amplitude.Release" value="0.1760000139474869"/>
+      <PARAM id="Amplitude.Sustain" value="0.7999999523162842"/>
+      <PARAM id="Cutoff" value="20000.0"/>
+      <PARAM id="DelayFeedback" value="0.5399999618530273"/>
+      <PARAM id="DelayMix" value="0.7400000095367432"/>
+      <PARAM id="DelayTime" value="500.8999938964844"/>
+      <PARAM id="Dirt" value="0.3799999952316284"/>
+      <PARAM id="Filter.Attack" value="0.04800000041723251"/>
+      <PARAM id="Filter.Decay" value="0.135000005364418"/>
+      <PARAM id="Filter.Release" value="0.1270000040531158"/>
+      <PARAM id="Filter.Sustain" value="0.1599999964237213"/>
+      <PARAM id="FilterEnv" value="0.9270000457763672"/>
+      <PARAM id="Master" value="0.0"/>
+      <PARAM id="PhaserDepth" value="0.3599999845027924"/>
+      <PARAM id="PhaserMix" value="0.6699999570846558"/>
+      <PARAM id="PhaserRate" value="0.1799999922513962"/>
+      <PARAM id="PitchBendRange" value="2.0"/>
+      <PARAM id="Resonance" value="2.480000019073486"/>
+      <PARAM id="Shape" value="0.0"/>
+      <PARAM id="Space" value="0.6200000047683716"/>
+      <PARAM id="Spread" value="0.06100000441074371"/>
+      <PARAM id="Unison" value="64.0"/>
+    </state>
+  </preset>
+  <preset>
+    <name>wasps in space</name>
+    <state>
+      <PARAM id="Amplitude.Attack" value="0.1500000059604645"/>
+      <PARAM id="Amplitude.Decay" value="0.4240000247955322"/>
+      <PARAM id="Amplitude.Release" value="0.1760000139474869"/>
+      <PARAM id="Amplitude.Sustain" value="0.6299999952316284"/>
+      <PARAM id="Cutoff" value="20000.0"/>
+      <PARAM id="DelayFeedback" value="0.5399999618530273"/>
+      <PARAM id="DelayMix" value="0.3499999940395355"/>
+      <PARAM id="DelayTime" value="500.8999938964844"/>
+      <PARAM id="Dirt" value="0.0"/>
+      <PARAM id="Filter.Attack" value="0.04800000041723251"/>
+      <PARAM id="Filter.Decay" value="0.135000005364418"/>
+      <PARAM id="Filter.Release" value="0.1270000040531158"/>
+      <PARAM id="Filter.Sustain" value="0.1599999964237213"/>
+      <PARAM id="FilterEnv" value="0.9270000457763672"/>
+      <PARAM id="Master" value="0.0"/>
+      <PARAM id="PhaserDepth" value="0.3599999845027924"/>
+      <PARAM id="PhaserMix" value="0.1799999922513962"/>
+      <PARAM id="PhaserRate" value="0.1799999922513962"/>
+      <PARAM id="PitchBendRange" value="2.0"/>
+      <PARAM id="Resonance" value="2.480000019073486"/>
+      <PARAM id="Shape" value="0.0"/>
+      <PARAM id="Space" value="0.3299999833106995"/>
+      <PARAM id="Spread" value="0.09100000560283661"/>
+      <PARAM id="Unison" value="23.0"/>
+    </state>
+  </preset>
+  <preset>
+    <name>tunnel harmonies</name>
+    <state>
+      <PARAM id="Amplitude.Attack" value="0.6580000519752502"/>
+      <PARAM id="Amplitude.Decay" value="0.4240000247955322"/>
+      <PARAM id="Amplitude.Release" value="0.8260000348091125"/>
+      <PARAM id="Amplitude.Sustain" value="0.7199999690055847"/>
+      <PARAM id="Cutoff" value="136.0"/>
+      <PARAM id="DelayFeedback" value="0.5999999642372131"/>
+      <PARAM id="DelayMix" value="0.449999988079071"/>
+      <PARAM id="DelayTime" value="400.5"/>
+      <PARAM id="Dirt" value="0.699999988079071"/>
+      <PARAM id="Filter.Attack" value="0.7790000438690186"/>
+      <PARAM id="Filter.Decay" value="0.2000000029802322"/>
+      <PARAM id="Filter.Release" value="0.5"/>
+      <PARAM id="Filter.Sustain" value="0.8199999928474426"/>
+      <PARAM id="FilterEnv" value="1.0"/>
+      <PARAM id="Master" value="0.0"/>
+      <PARAM id="PhaserDepth" value="0.2299999892711639"/>
+      <PARAM id="PhaserMix" value="0.0"/>
+      <PARAM id="PhaserRate" value="0.2099999934434891"/>
+      <PARAM id="PitchBendRange" value="2.0"/>
+      <PARAM id="Resonance" value="1.230000019073486"/>
+      <PARAM id="Shape" value="0.009999999776482582"/>
+      <PARAM id="Space" value="0.9699999690055847"/>
+      <PARAM id="Spread" value="0.05100000277161598"/>
+      <PARAM id="Unison" value="13.0"/>
+    </state>
+  </preset>
+  <preset>
+    <name>arpeggiate me</name>
+    <state>
+      <PARAM id="Amplitude.Attack" value="0.01700000092387199"/>
+      <PARAM id="Amplitude.Decay" value="0.1240000054240227"/>
+      <PARAM id="Amplitude.Release" value="0.08300000429153442"/>
+      <PARAM id="Amplitude.Sustain" value="0.0"/>
+      <PARAM id="Cutoff" value="1234.0"/>
+      <PARAM id="DelayFeedback" value="0.5299999713897705"/>
+      <PARAM id="DelayMix" value="0.1400000005960464"/>
+      <PARAM id="DelayTime" value="357.8999938964844"/>
+      <PARAM id="Dirt" value="0.0"/>
+      <PARAM id="Filter.Attack" value="0.1080000028014183"/>
+      <PARAM id="Filter.Decay" value="0.2000000029802322"/>
+      <PARAM id="Filter.Release" value="0.1660000085830688"/>
+      <PARAM id="Filter.Sustain" value="0.0"/>
+      <PARAM id="FilterEnv" value="0.2370000183582306"/>
+      <PARAM id="Master" value="0.0"/>
+      <PARAM id="PhaserDepth" value="0.4599999785423279"/>
+      <PARAM id="PhaserMix" value="0.75"/>
+      <PARAM id="PhaserRate" value="0.1299999952316284"/>
+      <PARAM id="PitchBendRange" value="2.0"/>
+      <PARAM id="Resonance" value="1.889999985694885"/>
+      <PARAM id="Shape" value="0.0"/>
+      <PARAM id="Space" value="0.1499999910593033"/>
+      <PARAM id="Spread" value="0.03100000135600567"/>
+      <PARAM id="Unison" value="23.0"/>
+    </state>
+  </preset>
+</presets>
