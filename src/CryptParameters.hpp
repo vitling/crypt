@@ -17,8 +17,6 @@
 #pragma once
 #include <JuceHeader.h>
 
-#define P(X) const String X = #X;
-
 namespace CryptParameters {
     const String Unison = "Unison";
     const String Spread = "Spread";
@@ -94,5 +92,3 @@ namespace CryptParameters {
         }
     }
 }
-
-#undef P

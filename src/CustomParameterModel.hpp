@@ -17,6 +17,9 @@
 #pragma once
 #include <JuceHeader.h>
 
+/* I found it helpful to separate the definition of a parameter from its  
+   identity within an AudioProcessor, so that different components can 'own'
+   their own parameter space */
 struct ParameterSpec {
     String id;
     String name;

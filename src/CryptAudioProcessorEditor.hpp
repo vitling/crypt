@@ -19,11 +19,6 @@
 #include <JuceHeader.h>
 #include "CryptAudioProcessor.hpp"
 
-// In preset edit mode, in a debug build, there will be a "Dump XML" to save preset data to
-// the DBG(...) log. This can then be copied into the presets.xml with some metadata to make
-// a new preset
-#define PRESET_EDIT_MODE false
-
 const Colour CRYPT_BLUE = Colour::fromString("ff60a5ca");
 
 class EmbeddedFonts {
@@ -628,6 +623,7 @@ private:
 
     ComboBox presets;
     TextButton save;
+    TextButton load;
 
     HyperlinkButton bowchurch;
     HyperlinkButton vitling;
@@ -640,6 +636,8 @@ private:
     const int keyboardHeight = 75;
 
     Image keyboardButtonImage;
+
+    std::unique_ptr<FileChooser> fileChooser;
 
 public:
 
@@ -694,12 +692,6 @@ public:
 
         presets.setTextWhenNothingSelected("-- presets --");
 
-        #if(PRESET_EDIT_MODE)
-        save.setButtonText("Dump XML");
-        addAndMakeVisible(save);
-        save.addListener(this);
-        #endif
-
         bowchurch.setButtonText("bow church");
         vitling.setButtonText("vitling");
         donate.setButtonText("contribute");
@@ -719,6 +711,15 @@ public:
         addAndMakeVisible(vitling);
         addAndMakeVisible(donate);
 
+        save.setButtonText("Save");
+        load.setButtonText("Load");
+        
+        addAndMakeVisible(save);
+        addAndMakeVisible(load);
+
+        save.addListener(this);
+        load.addListener(this);
+
         keyboardButton.addListener(this);
         
         addAndMakeVisible(keyboardButton);
@@ -735,6 +736,7 @@ public:
 
     void buttonClicked (Button* button) override {
         if (button == &save) {
+            openSaveDialog();
             auto currentState = processor.state.copyState();
             std::unique_ptr<XmlElement> xml (currentState.createXml());
             DBG(xml->toString());
@@ -750,6 +752,15 @@ public:
             resized();
         }
     };
+
+    void openSaveDialog() {
+        fileChooser = std::make_unique<FileChooser>("Save preset", File::getSpecialLocation(File::userHomeDirectory), "*.crypt");
+        auto flags = FileBrowserComponent::saveMode;
+        fileChooser->launchAsync(flags, [this] (const FileChooser& chooser) {
+            File file (chooser.getResult());
+            DBG(file.getFullPathName());
+        });
+    }
 
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override {
         processor.presetManager.applyPreset(comboBoxThatHasChanged->getSelectedId(), processor.state);
@@ -768,19 +779,17 @@ public:
         Rectangle<int> titleText = {titleBar.getCentreX()-102, titleBar.getY(), 200, titleBar.getHeight()};
         pluginTitle.setBounds(titleText);
 
-        #if(PRESET_EDIT_MODE)
-        Rectangle<int> saveBounds = titleBar.withLeft(titleBar.getWidth()- 100);
-        save.setBounds(saveBounds);
-        #else
         Rectangle<int> bcBounds = titleBar.withLeft(titleBar.getWidth() - 250).withWidth(150);
         Rectangle<int> vitBounds = titleBar.withLeft(titleBar.getWidth() - 100);
         Rectangle<int> donateBounds = titleBar.withLeft(titleBar.getWidth() - 350).withWidth(100);
         bowchurch.setBounds(bcBounds);
         vitling.setBounds(vitBounds);
         donate.setBounds(donateBounds);
-        #endif
 
         presets.setBounds(titleBar.removeFromLeft(200).reduced(10));
+
+        save.setBounds(Rectangle<int>{280,0,80,50}.reduced(10));
+        load.setBounds(Rectangle<int>{200,0,80,50}.reduced(10));
         
         
         auto leftBounds = totalBounds.removeFromLeft(400);
