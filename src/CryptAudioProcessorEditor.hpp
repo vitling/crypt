@@ -737,9 +737,11 @@ public:
     void buttonClicked (Button* button) override {
         if (button == &save) {
             openSaveDialog();
-            auto currentState = processor.state.copyState();
-            std::unique_ptr<XmlElement> xml (currentState.createXml());
-            DBG(xml->toString());
+            // auto currentState = processor.state.copyState();
+            // std::unique_ptr<XmlElement> xml (currentState.createXml());
+            // DBG(xml->toString());
+        } else if (button == &load) {
+            openLoadDialog();
         } else if (button == &keyboardButton) {
             keyboardIsVisible = !keyboardIsVisible;
             if (keyboardIsVisible) {
@@ -753,12 +755,40 @@ public:
         }
     };
 
+    void openLoadDialog() {
+        fileChooser = std::make_unique<FileChooser>("Load preset", File::getSpecialLocation(File::userHomeDirectory), "*.crypt");
+        auto flags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles;
+        fileChooser->launchAsync(flags, [this] (const FileChooser& chooser) {
+            File file (chooser.getResult());
+            if (file.getFileName().isEmpty()) {
+                DBG("No file selected");
+            } else {
+                auto result = XmlDocument::parse(file);
+                if (result != nullptr) {
+                    if (result->hasTagName(processor.state.state.getType())) {
+                        processor.state.replaceState(ValueTree::fromXml(*result));
+                        presets.setSelectedId(0, NotificationType::dontSendNotification);
+                        presets.setTextWhenNothingSelected(file.getFileName());
+                    }
+                }
+            }
+        });
+    }
+
     void openSaveDialog() {
         fileChooser = std::make_unique<FileChooser>("Save preset", File::getSpecialLocation(File::userHomeDirectory), "*.crypt");
         auto flags = FileBrowserComponent::saveMode;
         fileChooser->launchAsync(flags, [this] (const FileChooser& chooser) {
             File file (chooser.getResult());
-            DBG(file.getFullPathName());
+            if (file.getFileName().isEmpty()) {
+                DBG("Cancelled save");
+            } else {
+                DBG("Saving to: " << file.getFullPathName());
+                auto currentState = processor.state.copyState();
+                std::unique_ptr<XmlElement> xml (currentState.createXml());
+                xml->writeTo(file);
+
+            }
         });
     }
 
@@ -788,8 +818,8 @@ public:
 
         presets.setBounds(titleBar.removeFromLeft(200).reduced(10));
 
-        save.setBounds(Rectangle<int>{280,0,80,50}.reduced(10));
-        load.setBounds(Rectangle<int>{200,0,80,50}.reduced(10));
+        save.setBounds(Rectangle<int>{270,0,70,50}.reduced(10));
+        load.setBounds(Rectangle<int>{200,0,70,50}.reduced(10));
         
         
         auto leftBounds = totalBounds.removeFromLeft(400);
