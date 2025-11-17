@@ -775,6 +775,7 @@ public:
     void openSaveDialog() {
         fileChooser = std::make_unique<FileChooser>("Save preset", File::getSpecialLocation(File::userHomeDirectory), "*.crypt");
         auto flags = FileBrowserComponent::saveMode;
+        
         fileChooser->launchAsync(flags, [this] (const FileChooser& chooser) {
             File file (chooser.getResult());
             if (file.getFileName().isEmpty()) {
@@ -784,7 +785,8 @@ public:
                 auto currentState = processor.state.copyState();
                 std::unique_ptr<XmlElement> xml (currentState.createXml());
                 xml->writeTo(file);
-
+                presets.setSelectedId(0, NotificationType::dontSendNotification);
+                presets.setTextWhenNothingSelected(file.getFileName());
             }
         });
     }
