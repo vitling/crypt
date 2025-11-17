@@ -737,9 +737,6 @@ public:
     void buttonClicked (Button* button) override {
         if (button == &save) {
             openSaveDialog();
-            // auto currentState = processor.state.copyState();
-            // std::unique_ptr<XmlElement> xml (currentState.createXml());
-            // DBG(xml->toString());
         } else if (button == &load) {
             openLoadDialog();
         } else if (button == &keyboardButton) {
