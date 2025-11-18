@@ -639,6 +639,8 @@ private:
 
     std::unique_ptr<FileChooser> fileChooser;
 
+    Label versionNumber;
+
 public:
 
     /** Set up the editor */
@@ -726,6 +728,10 @@ public:
         addAndMakeVisible(keyboard);
         keyboard.setVisible(keyboardIsVisible);
         keyboard.setBounds({ 0,625,1000,keyboardHeight });
+
+        versionNumber.setText(String {"v"} + ProjectInfo::versionString, NotificationType::dontSendNotification);
+        addAndMakeVisible(versionNumber);
+
         resized();
 
     }
@@ -850,6 +856,7 @@ public:
         rightLayout.layOutComponents(rightComponents, 4, rightBounds.getX(), rightBounds.getY(), rightBounds.getWidth(), rightBounds.getHeight(), true, true);
         global.setBounds(global.getBounds().withTrimmedRight(50));
         keyboardButton.setBounds({global.getRight(), global.getY() + 30, 50, 50});
+        versionNumber.setBounds({global.getRight(), global.getY()+90, 50, 20});
     }
 
 

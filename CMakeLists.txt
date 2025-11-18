@@ -17,12 +17,12 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_OSX_DEPLOYMENT_TARGET 10.12 CACHE STRING "Minimum OS X deployment version" FORCE)
 
-project(CRYPT_SYNTH_PLUGIN VERSION 2.0.1)
+project(CRYPT_SYNTH_PLUGIN VERSION 2.1.0)
 
 add_subdirectory(JUCE)
 
 juce_add_plugin(Crypt2SynthPlugin
-        VERSION 2.0.1                               # Set this if the plugin version is different to the project version
+        VERSION 2.1.0                               # Set this if the plugin version is different to the project version
         ICON_BIG ${CMAKE_CURRENT_SOURCE_DIR}/resources/crypt-icon.png                              # ICON_* arguments specify a path to an image file to use as an icon for the Standalone
         ICON_SMALL ${CMAKE_CURRENT_SOURCE_DIR}/resources/crypt-icon.png
         COMPANY_NAME Vitling                          # Specify the name of the plugin's author
