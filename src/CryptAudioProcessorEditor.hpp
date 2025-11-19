@@ -27,7 +27,8 @@ private:
 
 public:
     EmbeddedFonts() {
-        gothicaBook = Font(Typeface::createSystemTypefaceFor(BinaryData::GothicaBook_ttf, BinaryData::GothicaBook_ttfSize));
+        // Experimentally disabled, to see if it helps Linux users
+        // gothicaBook = Font(Typeface::createSystemTypefaceFor(BinaryData::GothicaBook_ttf, BinaryData::GothicaBook_ttfSize));
     }
     const Font& getGothicaBook() const {
         return gothicaBook;
