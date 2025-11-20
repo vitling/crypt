@@ -35,12 +35,19 @@ public:
 };
 
 
+EmbeddedFonts& getFonts()
+{
+  static EmbeddedFonts fonts;
+  return fonts;
+}
+
+
 class CryptLookAndFeel: public LookAndFeel_V4 {
-    SharedResourcePointer<EmbeddedFonts> fonts;
     public:
     CryptLookAndFeel() {
 
         auto thumb = CRYPT_BLUE;
+        auto fonts = getFonts();
         this->setColour(Slider::ColourIds::thumbColourId, thumb);
         this->setColour(Slider::ColourIds::trackColourId, Colours::orange);
         this->setColour(Slider::ColourIds::backgroundColourId, Colours::black);
@@ -58,7 +65,7 @@ class CryptLookAndFeel: public LookAndFeel_V4 {
         this->setColour(MidiKeyboardComponent::ColourIds::textLabelColourId, CRYPT_BLUE);
         this->setColour(MidiKeyboardComponent::ColourIds::shadowColourId, Colours::transparentWhite);
 
-        this->setDefaultSansSerifTypeface(fonts->getGothicaBook().getTypefacePtr());
+        this->setDefaultSansSerifTypeface(fonts.getGothicaBook().getTypefacePtr());
     }
 
     // After numerous attempts to remove the box from the value label with conventional methods I just gave up and overrid it here
@@ -142,7 +149,6 @@ class LabelledDial: public Component {
     Slider slider;
     Label label;
     AudioProcessorValueTreeState::SliderAttachment attachment;
-    SharedResourcePointer<EmbeddedFonts> fonts;
 
     public:
     LabelledDial(AudioProcessorValueTreeState &state, StringRef parameterId, StringRef labelText = "", StringRef suffix = ""):
@@ -150,6 +156,7 @@ class LabelledDial: public Component {
         slider(),
         attachment(state, parameterId, slider)
      {
+        auto fonts = getFonts();
 
         slider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
         if (suffix.isNotEmpty()) {
@@ -165,7 +172,7 @@ class LabelledDial: public Component {
             label.setText(labelText,NotificationType::dontSendNotification);
         }
         label.setJustificationType(Justification::centred);
-        label.setFont(fonts->getGothicaBook().withHeight(20));
+        label.setFont(fonts.getGothicaBook().withHeight(20));
         addAndMakeVisible(slider);
         addAndMakeVisible(label);
     }
@@ -663,10 +670,10 @@ public:
             tooltipWindow(this) {
 
         setLookAndFeel(&lookAndFeel);
-        SharedResourcePointer<EmbeddedFonts> fonts;
+        auto fonts = getFonts();
 
         pluginTitle.setText("CRYPT",NotificationType::dontSendNotification);
-        pluginTitle.setFont(fonts->getGothicaBook().withHeight(40));
+        pluginTitle.setFont(fonts.getGothicaBook().withHeight(40));
         pluginTitle.setJustificationType(Justification::horizontallyCentred);
 
         setSize(1000,625);
@@ -703,9 +710,9 @@ public:
         vitling.setURL(URL{"https://www.vitling.xyz/ext/crypt/vitling"});
         donate.setURL(URL{"https://www.vitling.xyz/ext/crypt/donate"});
 
-        bowchurch.setFont(fonts->getGothicaBook().withHeight(24.0f), false);
-        vitling.setFont(fonts->getGothicaBook().withHeight(24.0f), false);
-        donate.setFont(fonts->getGothicaBook().withHeight(24.0f), false);
+        bowchurch.setFont(fonts.getGothicaBook().withHeight(24.0f), false);
+        vitling.setFont(fonts.getGothicaBook().withHeight(24.0f), false);
+        donate.setFont(fonts.getGothicaBook().withHeight(24.0f), false);
         bowchurch.setTooltip("");
         vitling.setTooltip("");
 
