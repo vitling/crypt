@@ -47,7 +47,7 @@ class CryptLookAndFeel: public LookAndFeel_V4 {
     CryptLookAndFeel() {
 
         auto thumb = CRYPT_BLUE;
-        auto fonts = getFonts();
+        auto& fonts = getFonts();
         this->setColour(Slider::ColourIds::thumbColourId, thumb);
         this->setColour(Slider::ColourIds::trackColourId, Colours::orange);
         this->setColour(Slider::ColourIds::backgroundColourId, Colours::black);
@@ -156,7 +156,7 @@ class LabelledDial: public Component {
         slider(),
         attachment(state, parameterId, slider)
      {
-        auto fonts = getFonts();
+        auto& fonts = getFonts();
 
         slider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
         if (suffix.isNotEmpty()) {
@@ -670,7 +670,7 @@ public:
             tooltipWindow(this) {
 
         setLookAndFeel(&lookAndFeel);
-        auto fonts = getFonts();
+        auto& fonts = getFonts();
 
         pluginTitle.setText("CRYPT",NotificationType::dontSendNotification);
         pluginTitle.setFont(fonts.getGothicaBook().withHeight(40));
