@@ -27,19 +27,19 @@ private:
 
 public:
     EmbeddedFonts() {
-        // Experimentally disabled, to see if it helps Linux users
-        // gothicaBook = Font(Typeface::createSystemTypefaceFor(BinaryData::GothicaBook_ttf, BinaryData::GothicaBook_ttfSize));
+        gothicaBook = Font(Typeface::createSystemTypefaceFor(BinaryData::GothicaBook_ttf, BinaryData::GothicaBook_ttfSize));
     }
     const Font& getGothicaBook() const {
         return gothicaBook;
     }
 };
 
-EmbeddedFonts fonts;
 
 class CryptLookAndFeel: public LookAndFeel_V4 {
+    SharedResourcePointer<EmbeddedFonts> fonts;
     public:
     CryptLookAndFeel() {
+
         auto thumb = CRYPT_BLUE;
         this->setColour(Slider::ColourIds::thumbColourId, thumb);
         this->setColour(Slider::ColourIds::trackColourId, Colours::orange);
@@ -58,8 +58,7 @@ class CryptLookAndFeel: public LookAndFeel_V4 {
         this->setColour(MidiKeyboardComponent::ColourIds::textLabelColourId, CRYPT_BLUE);
         this->setColour(MidiKeyboardComponent::ColourIds::shadowColourId, Colours::transparentWhite);
 
-        this->setDefaultSansSerifTypeface(fonts.getGothicaBook().getTypefacePtr());
-        
+        this->setDefaultSansSerifTypeface(fonts->getGothicaBook().getTypefacePtr());
     }
 
     // After numerous attempts to remove the box from the value label with conventional methods I just gave up and overrid it here
@@ -143,6 +142,7 @@ class LabelledDial: public Component {
     Slider slider;
     Label label;
     AudioProcessorValueTreeState::SliderAttachment attachment;
+    SharedResourcePointer<EmbeddedFonts> fonts;
 
     public:
     LabelledDial(AudioProcessorValueTreeState &state, StringRef parameterId, StringRef labelText = "", StringRef suffix = ""):
@@ -150,13 +150,13 @@ class LabelledDial: public Component {
         slider(),
         attachment(state, parameterId, slider)
      {
-        
+
         slider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
         if (suffix.isNotEmpty()) {
             slider.setTextValueSuffix(suffix);
-        
+
         }
-        
+
         slider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 70, 20);
 
         if (labelText.isEmpty()) {
@@ -165,7 +165,7 @@ class LabelledDial: public Component {
             label.setText(labelText,NotificationType::dontSendNotification);
         }
         label.setJustificationType(Justification::centred);
-        label.setFont(fonts.getGothicaBook().withHeight(20));
+        label.setFont(fonts->getGothicaBook().withHeight(20));
         addAndMakeVisible(slider);
         addAndMakeVisible(label);
     }
@@ -195,13 +195,13 @@ public:
         if (visualiser) {
             addAndMakeVisible(*visualiser);
         }
-        
+
         setText(title);
     }
 
     void resized() override {
         auto contentsBounds = getLocalBounds().reduced(20);
-        
+
         int width = contentsBounds.getWidth();
         int height = 80;
 
@@ -211,14 +211,14 @@ public:
         if (visualiser) {
             visualiser->setBounds(contentsBounds);
         }
-    
+
         float controlWidth = width / nControls;
         for (int i = 0 ; i < nControls; i++) {
             auto &c = controls[i];
             c->setBounds({controlBounds.getX() + i * (int)controlWidth, controlBounds.getY(), (int)controlWidth, height});
         }
     }
-    
+
 };
 
 class ADSREditor: public GroupComponent {
@@ -284,8 +284,8 @@ class ADSREditor: public GroupComponent {
 
             graphics.setColour(CRYPT_BLUE);
 
-            
-            Point<float>    start(0, yScale+5), 
+
+            Point<float>    start(0, yScale+5),
                             peak(xScale * attack, 5),
                             sus1(xScale * (attack + decay), yScale * (1-sustain)+5),
                             sus2(xScale * (attack + decay + 1.0), yScale * (1-sustain)+5),
@@ -294,13 +294,13 @@ class ADSREditor: public GroupComponent {
             float curve = 0;
             Path path;
             path.startNewSubPath({0.0f, yScale+5});
-            
+
             path.cubicTo(start.translated(curve,0), peak.translated(-curve, 0), peak);
             path.cubicTo(peak.translated(curve,0), sus1.translated(-curve,0), sus1);
             path.cubicTo(sus1.translated(curve,0), sus2.translated(-curve,0), sus2);
 
             path.cubicTo(sus2.translated(curve,0), end.translated(-curve,0), end);
-            
+
 
             PathStrokeType s(2);
 
@@ -380,7 +380,7 @@ class DelayDisplay: public Component, public AudioProcessorValueTreeState::Liste
             delayFeedback = newValue;
         } else if (parameterID == CryptParameters::DelayMix) {
             delayMix = newValue;
-        } 
+        }
         triggerAsyncUpdate();
     }
     void paint(Graphics &g) override {
@@ -485,11 +485,11 @@ private:
 
     WaveformDisplay(SharedBuffer & buffer): buffer(buffer), img(Image::PixelFormat::ARGB, 200,500,true) {
         i.setImage(img);
-        
+
         addAndMakeVisible(i);
         startTimerHz(30);
     }
-    
+
 
     void resized() override {
         i.setBounds(getLocalBounds());
@@ -507,12 +507,12 @@ private:
     void update() {
         img.clear(img.getBounds(), Colours::transparentBlack);
         Graphics g(i.getImage());
-        
+
         buffer.read();
         auto & displayBuffer = buffer.get();
-        
+
         auto area = g.getClipBounds();
-        
+
         Path waveformPath;
         waveformPath.startNewSubPath(area.getCentreX(), 0);
 
@@ -522,7 +522,7 @@ private:
                 max = abs(displayBuffer[i]);
             }
         }
-        
+
         float scaleFactor = 0.7f / max;
         float dbSize = displayBuffer.size();
 
@@ -538,7 +538,7 @@ private:
 
         g.setColour (Colours::white);
         g.strokePath(waveformPath, PathStrokeType(2.0f));
-        
+
         const MessageManagerLock mml;
         if (mml.lockWasGained()) {
             repaint();
@@ -555,7 +555,7 @@ class KeyboardToggleButton: public Button {
     protected:
     void paintButton(Graphics& g, bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) {
         auto mainColor = CRYPT_BLUE;
-        
+
         g.setColour(CRYPT_BLUE.withAlpha((isEnabled ? 0.8f : 0.4f) + (shouldDrawButtonAsHighlighted ? 0.1f : 0.0f) + (shouldDrawButtonAsDown ? 0.1f : 0.0f)));
 
         g.drawImage(keyboardIcon, getLocalBounds().toFloat().reduced(10), RectanglePlacement::stretchToFit, true);
@@ -663,9 +663,10 @@ public:
             tooltipWindow(this) {
 
         setLookAndFeel(&lookAndFeel);
+        SharedResourcePointer<EmbeddedFonts> fonts;
 
         pluginTitle.setText("CRYPT",NotificationType::dontSendNotification);
-        pluginTitle.setFont(fonts.getGothicaBook().withHeight(40));
+        pluginTitle.setFont(fonts->getGothicaBook().withHeight(40));
         pluginTitle.setJustificationType(Justification::horizontallyCentred);
 
         setSize(1000,625);
@@ -701,10 +702,10 @@ public:
         bowchurch.setURL(URL{"https://www.vitling.xyz/ext/crypt/bowchurch"});
         vitling.setURL(URL{"https://www.vitling.xyz/ext/crypt/vitling"});
         donate.setURL(URL{"https://www.vitling.xyz/ext/crypt/donate"});
-        
-        bowchurch.setFont(fonts.getGothicaBook().withHeight(24.0f), false);
-        vitling.setFont(fonts.getGothicaBook().withHeight(24.0f), false);
-        donate.setFont(fonts.getGothicaBook().withHeight(24.0f), false);
+
+        bowchurch.setFont(fonts->getGothicaBook().withHeight(24.0f), false);
+        vitling.setFont(fonts->getGothicaBook().withHeight(24.0f), false);
+        donate.setFont(fonts->getGothicaBook().withHeight(24.0f), false);
         bowchurch.setTooltip("");
         vitling.setTooltip("");
 
@@ -716,7 +717,7 @@ public:
 
         save.setButtonText("Save");
         load.setButtonText("Load");
-        
+
         addAndMakeVisible(save);
         addAndMakeVisible(load);
 
@@ -724,7 +725,7 @@ public:
         load.addListener(this);
 
         keyboardButton.addListener(this);
-        
+
         addAndMakeVisible(keyboardButton);
         addAndMakeVisible(keyboard);
         keyboard.setVisible(keyboardIsVisible);
@@ -782,7 +783,7 @@ public:
     void openSaveDialog() {
         fileChooser = std::make_unique<FileChooser>("Save preset", File::getSpecialLocation(File::userHomeDirectory), "*.crypt");
         auto flags = FileBrowserComponent::saveMode;
-        
+
         fileChooser->launchAsync(flags, [this] (const FileChooser& chooser) {
             File file (chooser.getResult());
             if (file.getFileName().isEmpty()) {
@@ -811,7 +812,7 @@ public:
             auto keyboardBounds = totalBounds.removeFromBottom(keyboardHeight);
             keyboard.setBounds(keyboardBounds);
         }
-        
+
         Rectangle<int> titleText = {titleBar.getCentreX()-102, titleBar.getY(), 200, titleBar.getHeight()};
         pluginTitle.setBounds(titleText);
 
@@ -826,8 +827,8 @@ public:
 
         save.setBounds(Rectangle<int>{270,0,70,50}.reduced(10));
         load.setBounds(Rectangle<int>{200,0,70,50}.reduced(10));
-        
-        
+
+
         auto leftBounds = totalBounds.removeFromLeft(400);
         auto rightBounds = totalBounds.removeFromRight(400);
 
@@ -842,7 +843,7 @@ public:
         leftLayout.setItemLayout(1, 200,200,200);
         leftLayout.setItemLayout(2, 125,125,125);
         leftLayout.layOutComponents(leftComponents, 3, leftBounds.getX(), leftBounds.getY(), leftBounds.getWidth(), leftBounds.getHeight(), true, true);
-        
+
         auto envBounds = ampEnv.getBounds();
         auto ampEnvBounds = envBounds.removeFromLeft(envBounds.getWidth() / 2);
         ampEnv.setBounds(ampEnvBounds);
