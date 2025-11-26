@@ -268,7 +268,7 @@ public:
                 float lPan = 1.0f - rPan;
 
                 float wave = saw(o.angle);
-                float shaped = std::clamp(wave + copysign(shape, wave), -1.0f, 1.0f);
+                float shaped = std::clamp(float(wave + copysign(shape, wave)), -1.0f, 1.0f);
 
                 outL += unisonScaleFactor * shaped * lPan;
                 outR += unisonScaleFactor * shaped * rPan;

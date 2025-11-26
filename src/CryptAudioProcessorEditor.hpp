@@ -34,12 +34,18 @@ public:
     }
 };
 
-EmbeddedFonts fonts;
+EmbeddedFonts& getFonts()
+{
+  static EmbeddedFonts fonts;
+  return fonts;
+}
+
 
 class CryptLookAndFeel: public LookAndFeel_V4 {
     public:
     CryptLookAndFeel() {
         auto thumb = CRYPT_BLUE;
+        auto& fonts = getFonts();
         this->setColour(Slider::ColourIds::thumbColourId, thumb);
         this->setColour(Slider::ColourIds::trackColourId, Colours::orange);
         this->setColour(Slider::ColourIds::backgroundColourId, Colours::black);
@@ -149,7 +155,7 @@ class LabelledDial: public Component {
         slider(),
         attachment(state, parameterId, slider)
      {
-        
+        auto& fonts = getFonts();
         slider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
         if (suffix.isNotEmpty()) {
             slider.setTextValueSuffix(suffix);
@@ -662,6 +668,7 @@ public:
             tooltipWindow(this) {
 
         setLookAndFeel(&lookAndFeel);
+        auto& fonts = getFonts();
 
         pluginTitle.setText("CRYPT",NotificationType::dontSendNotification);
         pluginTitle.setFont(fonts.getGothicaBook().withHeight(40));
